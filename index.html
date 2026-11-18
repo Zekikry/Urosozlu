@@ -1,0 +1,1877 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Üroloji Soru-Cevap & Klinik Öğrenme Platformu</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            uro: {
+              50: '#f0f7ff',
+              100: '#e0effe',
+              200: '#bae0fd',
+              500: '#0284c7',
+              600: '#0369a1',
+              700: '#075985',
+              800: '#0c4a6e',
+              900: '#082f49',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* Özel kaydırma çubuğu */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+    /* Flip Card Animasyonu */
+    .perspective-1000 {
+      perspective: 1000px;
+    }
+    .transform-style-3d {
+      transform-style: preserve-3d;
+    }
+    .backface-hidden {
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+    }
+    .rotate-y-180 {
+      transform: rotateY(180deg);
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col font-sans selection:bg-sky-500 selection:text-white">
+
+  <!-- Üst Bilgi & Navigasyon Çubuğu -->
+  <header class="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-slate-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <!-- Logo & Başlık -->
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-600 to-cyan-500 flex items-center justify-center text-white shadow-md shadow-sky-500/20">
+            <i data-lucide="stethoscope" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="font-extrabold text-slate-900 tracking-tight text-lg">ÜROLOJİ</span>
+              <span class="px-2 py-0.5 text-xs font-semibold rounded-full bg-sky-100 text-sky-800 border border-sky-200">96 Soru-Cevap Notu</span>
+            </div>
+            <p class="text-[11px] text-slate-500 hidden sm:block">5 Bilimsel Öğrenme Tekniği ile Tam Sadakatli Klinik Çalışma Modülü</p>
+          </div>
+        </div>
+
+        <!-- Öğrenme Modları Seçici (Sekmeler) -->
+        <nav class="hidden md:flex items-center gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200 text-sm font-medium">
+          <button onclick="switchTab('library')" id="nav-library" class="tab-btn px-3 py-1.5 rounded-lg text-slate-700 hover:text-sky-700 transition flex items-center gap-1.5 active-tab bg-white shadow-sm text-sky-700 font-semibold">
+            <i data-lucide="book-open" class="w-4 h-4"></i> Konu Kütüphanesi
+          </button>
+          <button onclick="switchTab('flashcards')" id="nav-flashcards" class="tab-btn px-3 py-1.5 rounded-lg text-slate-700 hover:text-sky-700 transition flex items-center gap-1.5">
+            <i data-lucide="layers" class="w-4 h-4"></i> Aktif Hatırlama & Leitner
+          </button>
+          <button onclick="switchTab('quiz')" id="nav-quiz" class="tab-btn px-3 py-1.5 rounded-lg text-slate-700 hover:text-sky-700 transition flex items-center gap-1.5">
+            <i data-lucide="check-circle-2" class="w-4 h-4"></i> Çapraz Test (Quiz)
+          </button>
+          <button onclick="switchTab('oral')" id="nav-oral" class="tab-btn px-3 py-1.5 rounded-lg text-slate-700 hover:text-sky-700 transition flex items-center gap-1.5"><i data-lucide="mic" class="w-4 h-4"></i> Sözlü</button>
+          <button onclick="switchTab('dualcoding')" id="nav-dualcoding" class="tab-btn px-3 py-1.5 rounded-lg text-slate-700 hover:text-sky-700 transition flex items-center gap-1.5">
+            <i data-lucide="layout-grid" class="w-4 h-4"></i> Şema & Algoritmalar
+          </button>
+        </nav>
+
+        <!-- İlerleme Özeti & Teknik Bilgi -->
+        <div class="flex items-center gap-2">
+          <button onclick="openTechniquesModal()" class="px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200 hover:bg-indigo-100 transition flex items-center gap-1">
+            <i data-lucide="sparkles" class="w-3.5 h-3.5 text-indigo-600"></i>
+            <span class="hidden sm:inline">5 Öğrenme Tekniği</span>
+          </button>
+          <div class="bg-slate-100 px-3 py-1 rounded-lg border border-slate-200 text-xs flex items-center gap-2">
+            <span class="text-slate-500">Öğrenilen:</span>
+            <span id="learned-stat-badge" class="font-bold text-emerald-600">0 / 96</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mobil Sekme Çubuğu -->
+    <div class="md:hidden flex overflow-x-auto border-t border-slate-200 px-2 py-1.5 gap-1 bg-slate-50 text-xs">
+      <button onclick="switchTab('library')" class="tab-btn-mobile whitespace-nowrap px-3 py-1 rounded-md bg-white text-sky-700 font-bold border border-slate-200" data-target="library">Kütüphane</button>
+      <button onclick="switchTab('flashcards')" class="tab-btn-mobile whitespace-nowrap px-3 py-1 rounded-md text-slate-600" data-target="flashcards">Flaş Kart (Leitner)</button>
+      <button onclick="switchTab('quiz')" class="tab-btn-mobile whitespace-nowrap px-3 py-1 rounded-md text-slate-600" data-target="quiz">Quiz</button>
+      <button onclick="switchTab('oral')" class="tab-btn-mobile whitespace-nowrap px-3 py-1 rounded-md text-slate-600" data-target="oral">Sözlü</button>
+      <button onclick="switchTab('dualcoding')" class="tab-btn-mobile whitespace-nowrap px-3 py-1 rounded-md text-slate-600" data-target="dualcoding">Şemalar</button>
+    </div>
+  </header>
+
+  <!-- Ana İçerik Alanı -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8">
+
+    <!-- TAB 1: KONU KÜTÜPHANESİ & DETAYLI LİSTE (SEARCH, FILTER, HIDE/REVEAL) -->
+    <section id="tab-library" class="tab-content block space-y-6">
+      <!-- Bilgilendirme Banner -->
+      <div class="bg-gradient-to-r from-sky-900 via-sky-800 to-slate-900 rounded-2xl p-6 text-white shadow-xl relative overflow-hidden">
+        <div class="relative z-10 max-w-3xl">
+          <span class="inline-block px-2.5 py-0.5 rounded-full bg-sky-500/20 text-sky-200 border border-sky-400/30 text-xs font-semibold mb-2">
+            Tüm El Yazısı Ders Notları Birebir Dijitalleştirildi
+          </span>
+          <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight mb-2">Üroloji Tam Konu & Soru Koleksiyonu</h1>
+          <p class="text-sky-100 text-sm leading-relaxed">
+            Not kağıtlarındaki 96 sorunun ve cevabının her satırı; değerleri, ilaçları, evreleri ve algoritmalarıyla eksiksiz buradadır. 
+            "Aktif Hatırlama" için cevapları gizleyip kendinizi test edebilir, seviyenize göre (Tekrar, Zor, Öğrenildi) Leitner kutusuna atayabilirsiniz.
+          </p>
+        </div>
+        <div class="absolute -right-12 -bottom-12 opacity-10 text-white pointer-events-none">
+          <i data-lucide="dna" class="w-64 h-64"></i>
+        </div>
+      </div>
+
+      <!-- Filtreler & Arama Barı -->
+      <div class="bg-white rounded-xl p-4 border border-slate-200 shadow-sm flex flex-col md:flex-row gap-3 items-center justify-between">
+        <div class="relative w-full md:w-96">
+          <i data-lucide="search" class="w-4 h-4 absolute left-3 top-3 text-slate-400"></i>
+          <input type="text" id="library-search" oninput="filterLibrary()" placeholder="Soru, tanı, ilaç, değer veya semptom ara..." class="w-full pl-9 pr-4 py-2 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent">
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2 w-full md:w-auto">
+          <!-- Kategori Filtresi -->
+          <select id="library-cat-filter" onchange="filterLibrary()" class="bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-sky-500">
+            <option value="ALL">Tüm Konular (8 Bölüm)</option>
+            <option value="tas">1. Taş Hastalıkları (Ürolitiazis)</option>
+            <option value="bph">2. BPH & Alt Üriner Sistem</option>
+            <option value="androloji">3. Androloji & İnfertilite & ED</option>
+            <option value="aciller">4. Ürolojik Aciller & Travma</option>
+            <option value="enfeksiyon">5. İYE & CYBH</option>
+            <option value="mesane_ca">6. Mesane Kanseri & Evreleme</option>
+            <option value="prostat_ca">7. Prostat Kanseri</option>
+            <option value="renal_pediatri">8. Böbrek, Testis CA & Konjenital</option>
+          </select>
+
+          <!-- Leitner Durumu Filtresi -->
+          <select id="library-status-filter" onchange="filterLibrary()" class="bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-sky-500">
+            <option value="ALL">Tüm Durumlar</option>
+            <option value="box1">🔴 Kutu 1: Tekrar Gereken</option>
+            <option value="box2">🟡 Kutu 2: Zorlandıklarım</option>
+            <option value="box3">🟢 Kutu 3: Öğrenildi</option>
+          </select>
+
+          <!-- Toplu Cevap Gizle/Göster -->
+          <button onclick="toggleAllAnswers()" id="btn-toggle-all" class="px-3 py-2 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-xs font-semibold text-slate-700 transition flex items-center gap-1.5">
+            <i data-lucide="eye-off" class="w-3.5 h-3.5"></i> Tüm Cevapları Gizle
+          </button>
+        </div>
+      </div>
+
+      <!-- Soru Kartları Grid -->
+      <div id="library-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- JavaScript ile 96 kart dinamik olarak render edilecek -->
+      </div>
+    </section>
+
+    <!-- TAB 2: AKTİF HATIRLAMA & LEITNER KUTUSU (FLASHCARD ENGINE) -->
+    <section id="tab-flashcards" class="tab-content hidden space-y-6">
+      <div class="flex flex-col md:flex-row items-center justify-between gap-4 bg-white p-4 rounded-xl border border-slate-200">
+        <div>
+          <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+            <i data-lucide="layers" class="w-5 h-5 text-sky-600"></i> Aktif Hatırlama & Leitner 3-Aşamalı Tekrar Sistemi
+          </h2>
+          <p class="text-xs text-slate-500 mt-0.5">Önce cevabı aklından söylemeye çalış, karta dokunarak çevir, sonra hatırlama durumuna göre kutuyu seç.</p>
+        </div>
+
+        <!-- Leitner Kutu Sayacı & Filtreleme -->
+        <div class="flex items-center gap-2">
+          <button onclick="setFlashcardBoxFilter(1)" id="fc-box1-btn" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-rose-50 text-rose-700 border border-rose-200 flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-rose-500"></span> Kutu 1 (Tekrar): <span id="fc-box1-count" class="font-bold">0</span>
+          </button>
+          <button onclick="setFlashcardBoxFilter(2)" id="fc-box2-btn" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200 flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-amber-500"></span> Kutu 2 (Zor): <span id="fc-box2-count" class="font-bold">0</span>
+          </button>
+          <button onclick="setFlashcardBoxFilter(3)" id="fc-box3-btn" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-emerald-500"></span> Kutu 3 (Tamam): <span id="fc-box3-count" class="font-bold">0</span>
+          </button>
+          <button onclick="setFlashcardBoxFilter('ALL')" id="fc-all-btn" class="px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-slate-200 text-slate-700">Hepsi</button>
+        </div>
+      </div>
+
+      <!-- Flaş Kart Gövdesi -->
+      <div class="max-w-2xl mx-auto">
+        <!-- Kart Alanı -->
+        <div class="w-full h-96 perspective-1000 cursor-pointer select-none" onclick="flipFlashcard()">
+          <div id="flashcard-inner" class="w-full h-full relative transform-style-3d transition-transform duration-500 rounded-2xl shadow-lg border border-slate-200">
+            <!-- Ön Yüz (Soru) -->
+            <div class="absolute inset-0 w-full h-full backface-hidden bg-white p-8 rounded-2xl flex flex-col justify-between border-2 border-sky-100">
+              <div class="flex items-center justify-between text-xs text-slate-400">
+                <span id="fc-category-badge" class="font-bold uppercase tracking-wider text-sky-600 bg-sky-50 px-2.5 py-1 rounded-md">Kategori</span>
+                <span id="fc-index-badge" class="font-mono">Soru 1 / 96</span>
+              </div>
+              <div class="my-auto text-center">
+                <div class="w-12 h-12 rounded-full bg-sky-50 text-sky-600 mx-auto flex items-center justify-center mb-4">
+                  <i data-lucide="help-circle" class="w-6 h-6"></i>
+                </div>
+                <h3 id="fc-question-text" class="text-xl sm:text-2xl font-bold text-slate-800 leading-snug">
+                  Soru Yükleniyor...
+                </h3>
+              </div>
+              <div class="text-center text-xs text-slate-400 flex items-center justify-center gap-1">
+                <i data-lucide="touchpad" class="w-3.5 h-3.5"></i>
+                <span>Cevabı görmek için karta tıkla veya dokun</span>
+              </div>
+            </div>
+
+            <!-- Arka Yüz (Orijinal Not Cevabı) -->
+            <div class="absolute inset-0 w-full h-full backface-hidden rotate-y-180 bg-slate-900 text-white p-6 sm:p-8 rounded-2xl flex flex-col justify-between overflow-y-auto">
+              <div class="flex items-center justify-between text-xs text-slate-400 border-b border-slate-800 pb-2">
+                <span class="text-emerald-400 font-semibold flex items-center gap-1">
+                  <i data-lucide="check-check" class="w-3.5 h-3.5"></i> Notlardaki Orijinal Cevap
+                </span>
+                <span class="text-slate-500 text-[11px]">Tekrar dokunarak soruyu gör</span>
+              </div>
+              <div class="my-auto py-2">
+                <div id="fc-answer-text" class="text-sm sm:text-base text-slate-200 leading-relaxed font-sans whitespace-pre-line">
+                  Cevap içeriği...
+                </div>
+              </div>
+              <div class="text-xs text-slate-400 text-center italic border-t border-slate-800 pt-2">
+                Şimdi dürüstçe değerlendir: Ne kadar iyi hatırladın?
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Leitner Değerlendirme & Gezinme Butonları -->
+        <div class="mt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div class="flex items-center gap-2 w-full sm:w-auto">
+            <button onclick="prevFlashcard()" class="flex-1 sm:flex-none px-4 py-2.5 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold flex items-center justify-center gap-1">
+              <i data-lucide="chevron-left" class="w-4 h-4"></i> Önceki
+            </button>
+            <button onclick="nextFlashcard()" class="flex-1 sm:flex-none px-4 py-2.5 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold flex items-center justify-center gap-1">
+              Sonraki <i data-lucide="chevron-right" class="w-4 h-4"></i>
+            </button>
+          </div>
+
+          <div class="grid grid-cols-3 gap-2 w-full sm:w-auto">
+            <button onclick="rateFlashcard(1)" class="px-3 py-2 rounded-xl bg-rose-100 hover:bg-rose-200 text-rose-800 text-xs font-bold transition flex items-center justify-center gap-1 shadow-sm">
+              <i data-lucide="x-circle" class="w-3.5 h-3.5"></i> Hatırlamadım (Kutu 1)
+            </button>
+            <button onclick="rateFlashcard(2)" class="px-3 py-2 rounded-xl bg-amber-100 hover:bg-amber-200 text-amber-800 text-xs font-bold transition flex items-center justify-center gap-1 shadow-sm">
+              <i data-lucide="help-circle" class="w-3.5 h-3.5"></i> Zorlandım (Kutu 2)
+            </button>
+            <button onclick="rateFlashcard(3)" class="px-3 py-2 rounded-xl bg-emerald-100 hover:bg-emerald-200 text-emerald-800 text-xs font-bold transition flex items-center justify-center gap-1 shadow-sm">
+              <i data-lucide="check-circle" class="w-3.5 h-3.5"></i> Bildim! (Kutu 3)
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 3: ÇAPRAZ TEST / QUIZ (INTERLEAVED PRACTICE) -->
+    <section id="tab-quiz" class="tab-content hidden space-y-6">
+      <div class="bg-white rounded-xl p-6 border border-slate-200 shadow-sm">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 border-b border-slate-100 pb-4">
+          <div>
+            <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+              <i data-lucide="shuffle" class="w-5 h-5 text-sky-600"></i> Çaprazlama Alıştırma (Interleaving Practice) Quiz
+            </h2>
+            <p class="text-xs text-slate-500 mt-1">Konuları blok halinde değil, rastgele karıştırarak çözmek zihnin ayırt etme gücünü %40 artırır.</p>
+          </div>
+          <div class="flex items-center gap-3">
+            <span class="text-xs font-bold bg-sky-100 text-sky-800 px-3 py-1 rounded-full" id="quiz-progress-text">Soru 1 / 10</span>
+            <span class="text-xs font-bold bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full" id="quiz-score-text">Doğru: 0</span>
+          </div>
+        </div>
+
+        <!-- Quiz Soru Alanı -->
+        <div id="quiz-container" class="max-w-2xl mx-auto space-y-6">
+          <div class="bg-slate-50 p-5 rounded-xl border border-slate-200">
+            <span id="quiz-cat-tag" class="text-[11px] font-bold text-sky-600 uppercase tracking-wider bg-white px-2.5 py-0.5 rounded border border-slate-200">Konu</span>
+            <h3 id="quiz-question" class="text-lg font-bold text-slate-800 mt-3 leading-relaxed">
+              Quiz Sorusu Buraya Gelecek...
+            </h3>
+          </div>
+
+          <!-- Seçenekler -->
+          <div id="quiz-options" class="space-y-3">
+            <!-- Seçenek butonları JS ile eklenecek -->
+          </div>
+
+          <!-- Açıklama ve Geri Bildirim -->
+          <div id="quiz-feedback" class="hidden p-4 rounded-xl text-sm leading-relaxed border"></div>
+
+          <!-- İleri Butonu -->
+          <div class="flex justify-end pt-4">
+            <button id="quiz-next-btn" onclick="nextQuizQuestion()" class="hidden px-5 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-700 text-white font-semibold text-sm transition flex items-center gap-1.5">
+              Sonraki Soru <i data-lucide="arrow-right" class="w-4 h-4"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB: SÖZLÜ SIMÜLASYONU -->
+    <section id="tab-oral" class="tab-content hidden space-y-6">
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 sm:p-7">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div><h2 class="text-2xl font-extrabold text-slate-900 flex items-center gap-2"><i data-lucide="mic" class="w-6 h-6 text-sky-600"></i> Sözlü Simülasyonu</h2><p class="text-sm text-slate-500 mt-1">96 soru arasından rastgele seçilen 5 soru ile sözlü pratiği yap.</p></div>
+          <button onclick="startOral()" class="px-5 py-3 rounded-xl bg-sky-600 hover:bg-sky-700 text-white font-bold shadow-sm">Sözlüye Başla · 5 Soru</button>
+        </div>
+      </div>
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5"><h3 class="text-lg font-bold text-slate-900 mb-3">Sözlü Geçmişi</h3><div id="oral-history-list" class="space-y-2 text-sm text-slate-600"><p class="text-slate-400">Henüz tamamlanmış sözlü yok.</p></div></div>
+    </section>
+    <div id="oral-overlay" class="hidden fixed inset-0 z-[100] bg-slate-950 text-white flex flex-col">
+      <header class="flex items-center justify-between gap-3 px-4 sm:px-6 py-3 border-b border-white/10"><div><div class="text-sky-300 text-xs font-bold uppercase tracking-wider">Sözlü Simülasyonu</div><div id="oral-progress" class="text-sm font-semibold">Soru 1 / 5</div></div><button onclick="finishOral()" class="px-3 py-2 rounded-lg bg-rose-600 hover:bg-rose-700 text-white text-sm font-bold">Sözlüyü Bitir</button></header>
+      <main class="flex-1 min-h-0 flex items-center justify-center p-3 sm:p-6 overflow-y-auto"><div class="w-full max-w-4xl">
+        <div id="oral-category" class="text-center text-xs sm:text-sm text-slate-400 mb-3">Kategori</div><article class="bg-slate-900 border border-slate-700 rounded-2xl p-4 sm:p-8 md:p-10 shadow-xl"><div id="oral-question" class="text-[clamp(1.1rem,4vw,2.3rem)] leading-snug font-bold text-center break-words">Soru</div><div id="oral-answer" class="hidden mt-6 text-[clamp(.9rem,2.6vw,1.25rem)] leading-relaxed text-slate-200 whitespace-pre-line border-t border-slate-700 pt-5"></div></article>
+        <div class="flex flex-wrap justify-center gap-2 mt-5"><button onclick="revealOralAnswer()" id="oral-reveal-btn" class="px-4 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-700 font-semibold">Cevabı Göster</button><div id="oral-score-controls" class="hidden flex flex-wrap justify-center gap-2"><button onclick="scoreOralQuestion(5)" class="px-4 py-2.5 rounded-xl bg-slate-700 hover:bg-slate-600 font-bold">5 Puan</button><button onclick="scoreOralQuestion(10)" class="px-4 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-500 font-bold">10 Puan</button><button onclick="scoreOralQuestion(20)" class="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 font-bold">20 Puan</button></div></div><div id="oral-total" class="text-center text-slate-400 text-sm mt-4">Toplam: 0 / 100</div>
+      </div></main></div>
+<!-- TAB 5: ŞEMA & ALGORİTMALAR (DUAL CODING - İKİLİ KODLAMA) -->
+    <section id="tab-dualcoding" class="tab-content hidden space-y-6">
+      <div class="bg-white rounded-xl p-6 border border-slate-200 shadow-sm">
+        <div class="max-w-3xl mb-6">
+          <div class="flex items-center gap-2 text-sky-700 font-bold text-xs uppercase tracking-wider mb-1">
+            <i data-lucide="layout-grid" class="w-4 h-4"></i> Dual Coding (İkili Kodlama) Görsel Şema Panosu
+          </div>
+          <h2 class="text-2xl font-extrabold text-slate-900">Karmaşık Algoritmalar, Evreler ve Tedavi Şemaları</h2>
+          <p class="text-slate-600 text-sm mt-1 leading-relaxed">
+            Metin ve görsel şemaların eşleştirilmesi beyindeki çift kanallı bellek kodlamasını tetikler. 
+            Notlardaki en kritik sayısal eşikler, tedavi algoritmaları ve derecelendirmeler aşağıda interaktif olarak yapılandırılmıştır.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Şema 1: Böbrek ve Üreter Taşlarında Boyut ve Yerine Göre Tedavi -->
+          <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200 space-y-3">
+            <div class="flex items-center justify-between">
+              <h3 class="text-sm font-bold text-slate-800 flex items-center gap-1.5">
+                <i data-lucide="disc" class="w-4 h-4 text-sky-600"></i> Böbrek & Üreter Taşı Tedavi Algoritması
+              </h3>
+              <span class="text-[11px] font-semibold bg-sky-100 text-sky-800 px-2 py-0.5 rounded">Soru 4, 5</span>
+            </div>
+            <div class="space-y-2 text-xs">
+              <div class="p-2.5 rounded-lg bg-white border border-slate-200">
+                <div class="font-bold text-slate-800">&gt; 2 cm (20 mm) Böbrek Taşı</div>
+                <div class="text-slate-600 mt-0.5">Birinci seçenek: <strong class="text-sky-700">PNL</strong> (Perkütan Nefrolitotomi)</div>
+              </div>
+              <div class="p-2.5 rounded-lg bg-white border border-slate-200">
+                <div class="font-bold text-slate-800">10 - 20 mm Böbrek Taşı</div>
+                <div class="text-slate-600 mt-0.5"><strong class="text-sky-700">ESWL</strong> ya da <strong class="text-sky-700">PNL, URS, RIRC</strong></div>
+              </div>
+              <div class="p-2.5 rounded-lg bg-white border border-slate-200">
+                <div class="font-bold text-slate-800">&lt; 10 mm (1 cm altı) Böbrek Taşı</div>
+                <div class="text-slate-600 mt-0.5">Birinci seçenek: <strong class="text-sky-700">ESWL / RIRC</strong> | İkinci: <strong>PNL</strong></div>
+              </div>
+              <div class="p-2.5 rounded-lg bg-white border border-slate-200">
+                <div class="font-bold text-slate-800">Alt Pol Taşı (Özel Durum)</div>
+                <div class="text-slate-600 mt-0.5">ESWL başarısını düşüren bir şey yoksa ESWL; eğer varsa girişimsel (Endoüroloji: PNL, URS, RIRC). Çoğunlukla <strong class="text-sky-700">URS</strong>.</div>
+              </div>
+              <div class="p-2.5 rounded-lg bg-amber-50 border border-amber-200 text-amber-900">
+                <div class="font-bold">Üreter Taşları:</div>
+                <div class="mt-1">
+                  • <strong>Proksimal &lt;10 mm:</strong> ESWL (2. URS) | <strong>Proksimal &gt;10 mm:</strong> ESWL veya URS<br>
+                  • <strong>Distal &lt;10 mm:</strong> URS veya ESWL | <strong>Distal &gt;10 mm:</strong> URS (2. ESWL)
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Şema 2: İskemik Priapizm Saat Çizelgesi Tedavisi -->
+          <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200 space-y-3">
+            <div class="flex items-center justify-between">
+              <h3 class="text-sm font-bold text-slate-800 flex items-center gap-1.5">
+                <i data-lucide="clock" class="w-4 h-4 text-rose-600"></i> İskemik Priapizm Süreye Göre Tedavi
+              </h3>
+              <span class="text-[11px] font-semibold bg-rose-100 text-rose-800 px-2 py-0.5 rounded">Soru 37</span>
+            </div>
+            <div class="relative pl-6 border-l-2 border-rose-300 space-y-3 text-xs">
+              <div class="relative">
+                <div class="absolute -left-[31px] top-0.5 w-3 h-3 rounded-full bg-rose-500 ring-4 ring-rose-100"></div>
+                <div class="font-bold text-slate-800">İlk 24 Saat:</div>
+                <div class="text-slate-600 mt-0.5">
+                  1. Korporal aspirasyon ve irrigasyon<br>
+                  2. İşe yaramazsa: Sempatomimetikler (<strong>Fenilefrin</strong>)<br>
+                  3. İşe yaramazsa: <strong>T-Şant</strong><br>
+                  4. İşe yaramazsa: <strong>Bilateral T-Şant</strong>
+                </div>
+              </div>
+              <div class="relative">
+                <div class="absolute -left-[31px] top-0.5 w-3 h-3 rounded-full bg-rose-400 ring-4 ring-rose-100"></div>
+                <div class="font-bold text-slate-800">24 - 48 Saat:</div>
+                <div class="text-slate-600 mt-0.5">Korporal aspirasyon → İşe yaramazsa T-Şant → Bilateral T-Şant</div>
+              </div>
+              <div class="relative">
+                <div class="absolute -left-[31px] top-0.5 w-3 h-3 rounded-full bg-rose-600 ring-4 ring-rose-100"></div>
+                <div class="font-bold text-slate-800">48 - 72 Saat:</div>
+                <div class="text-slate-600 mt-0.5">T-Şant denenir. Eğer nekroz gelişmişse doğrudan <strong>Penil Protez</strong> takılır.</div>
+              </div>
+              <div class="relative">
+                <div class="absolute -left-[31px] top-0.5 w-3 h-3 rounded-full bg-red-800 ring-4 ring-red-100"></div>
+                <div class="font-bold text-slate-800">&gt; 72 Saat:</div>
+                <div class="text-slate-600 mt-0.5 font-semibold text-rose-700">Doğrudan Penil Protez endikasyonu vardır.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Şema 3: Böbrek Kistleri Bosniak Sınıflaması -->
+          <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200 space-y-3">
+            <div class="flex items-center justify-between">
+              <h3 class="text-sm font-bold text-slate-800 flex items-center gap-1.5">
+                <i data-lucide="layers-3" class="w-4 h-4 text-emerald-600"></i> Bosniak Böbrek Kisti Sınıflaması
+              </h3>
+              <span class="text-[11px] font-semibold bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded">Soru 46</span>
+            </div>
+            <div class="space-y-2 text-xs">
+              <div class="p-2 rounded-lg bg-emerald-50 border border-emerald-200">
+                <strong class="text-emerald-900">Kategori 1:</strong> İnce duvarlı su densitesinde homojen basit benign kist. Malignite riski %0. <span class="text-slate-600">Takip gerekmez.</span>
+              </div>
+              <div class="p-2 rounded-lg bg-emerald-50 border border-emerald-200">
+                <strong class="text-emerald-900">Kategori 2:</strong> İnce septalı, kist duvarında ince kalsifikasyonlar olabilen benign kist (&lt;3 cm). Malignite riski %0. <span class="text-slate-600">Takip gerekmez.</span>
+              </div>
+              <div class="p-2 rounded-lg bg-amber-50 border border-amber-200">
+                <strong class="text-amber-900">Kategori 2f:</strong> Daha fazla ince septa, septa/duvarda minimal kalınlaşma ve minimal kontrastlanma. Tamamen intrarenal kontrast tutmayan &gt;3 cm lezyonlar. Malignite riski: <strong>%5 - %10</strong>. <span class="text-slate-700 font-semibold">Periyodik takip gerekir.</span>
+              </div>
+              <div class="p-2 rounded-lg bg-orange-50 border border-orange-200">
+                <strong class="text-orange-900">Kategori 3:</strong> Kontrast tutan, kalın düzensiz duvarı veya septası olan kistler. Malignite riski: <strong>%50</strong>. <span class="text-slate-700 font-semibold">Cerrahi veya aktif izlem.</span>
+              </div>
+              <div class="p-2 rounded-lg bg-rose-50 border border-rose-200">
+                <strong class="text-rose-900">Kategori 4:</strong> Kontrast tutan yumuşak doku komponentleri içeren kistler. Malignite riski: <strong>%95 - %100</strong>. <span class="text-rose-800 font-bold">Cerrahi tedavi şarttır.</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Şema 4: Prostat Kanseri D'Amico Risk Grupları & Gleason -->
+          <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200 space-y-3">
+            <div class="flex items-center justify-between">
+              <h3 class="text-sm font-bold text-slate-800 flex items-center gap-1.5">
+                <i data-lucide="shield-alert" class="w-4 h-4 text-indigo-600"></i> Prostat CA D'Amico Risk Sınıflaması
+              </h3>
+              <span class="text-[11px] font-semibold bg-indigo-100 text-indigo-800 px-2 py-0.5 rounded">Soru 81</span>
+            </div>
+            <div class="space-y-2 text-xs">
+              <div class="p-2.5 rounded-lg bg-emerald-50 border border-emerald-200">
+                <div class="font-bold text-emerald-900">Düşük Risk Grubu</div>
+                <div class="text-slate-700 mt-1">PSA &lt; 10 ng/mL <strong>VE</strong> Gleason skoru &le; 6 <strong>VE</strong> Klinik Evre T1 - T2a</div>
+              </div>
+              <div class="p-2.5 rounded-lg bg-amber-50 border border-amber-200">
+                <div class="font-bold text-amber-900">Orta Risk Grubu</div>
+                <div class="text-slate-700 mt-1">PSA 10 - 20 ng/mL <strong>VEYA</strong> Gleason skoru = 7 <strong>VEYA</strong> Klinik Evre T2b</div>
+              </div>
+              <div class="p-2.5 rounded-lg bg-rose-50 border border-rose-200">
+                <div class="font-bold text-rose-900">Yüksek Risk Grubu</div>
+                <div class="text-slate-700 mt-1">PSA &gt; 20 ng/mL <strong>VEYA</strong> Gleason skoru 8 - 10 <strong>VEYA</strong> Klinik Evre &ge; T2c</div>
+              </div>
+              <div class="p-2.5 rounded-lg bg-slate-900 text-white border border-slate-800">
+                <div class="font-bold text-sky-300">Lokal İleri Prostat Kanseri:</div>
+                <div class="text-slate-300 mt-1">Klinik Evre T3 - T4 (kapsül dışına ve komşu organlara yayılım).</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- 5 Öğrenme Tekniği Bilgi Modalı -->
+  <div id="techniques-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-xl w-full p-6 shadow-2xl border border-slate-200 max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-200">
+        <h3 class="font-extrabold text-slate-900 text-lg flex items-center gap-2">
+          <i data-lucide="graduation-cap" class="w-5 h-5 text-indigo-600"></i> Bu Sitede Uygulanan 4 Bilimsel Öğrenme Tekniği
+        </h3>
+        <button onclick="closeTechniquesModal()" class="text-slate-400 hover:text-slate-600 p-1">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      <div class="mt-4 space-y-4 text-xs leading-relaxed text-slate-600">
+        <div class="p-3 rounded-xl bg-sky-50 border border-sky-100">
+          <strong class="text-sky-900 text-sm block">1. Active Recall (Aktif Hatırlama):</strong>
+          Pasif okuma yerine zihnin zorlanmasıdır. Flaş kart ve Konu Kütüphanesi modundaki "Cevabı Gizle" düğmesiyle bilginin doğrudan belleğe geri çağrılması sağlanır.
+        </div>
+        <div class="p-3 rounded-xl bg-emerald-50 border border-emerald-100">
+          <strong class="text-emerald-900 text-sm block">2. Spaced Repetition (Aralıklı Tekrar / Leitner Kutusu):</strong>
+          Bilgiler 3 kutuya ayrılır: Kutu 1 (hatırlanamayanlar, sık tekrar), Kutu 2 (zorlanılanlar, orta tekrar), Kutu 3 (öğrenilenler, seyrek kontrol). Unutma eğrisi kırılır.
+        </div>
+        <div class="p-3 rounded-xl bg-amber-50 border border-amber-100">
+          <strong class="text-amber-900 text-sm block">3. Interleaving Practice (Çaprazlama / Karışık Alıştırma):</strong>
+          Sadece tek bir konuya saplanıp kalmak yerine, sınav simülasyonunda Taş, BPH, Kanser ve Acil sorularının karışık olarak çözülmesini sağlar.
+        </div>
+        <div class="p-3 rounded-xl bg-indigo-50 border border-indigo-100">
+          <strong class="text-slate-900 text-sm block">4. Dual Coding (İkili Kodlama / Şematik Gösterim):</strong>
+          Kelimeler ile algoritmik şemaların (priapizm saatleri, taş milimetreleri, Gleason ve Bosniak dereceleri) görsel matrislerle beyne çifte kodlanmasıdır.
+        </div>
+      </div>
+      <div class="mt-6 flex justify-end">
+        <button onclick="closeTechniquesModal()" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-semibold">Anladım, Çalışmaya Başla</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bildirim Kutusu (Toast) -->
+  <div id="toast-box" class="fixed bottom-5 right-5 z-50 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-2xl text-xs flex items-center gap-2 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
+    <i data-lucide="info" class="w-4 h-4 text-sky-400"></i>
+    <span id="toast-text">Bildirim</span>
+  </div>
+
+  <!-- JAVASCRIPT: 96 SORU-CEVAP VERİ TABANI & MOTORLAR -->
+  <script>
+    /*
+     * 55 SAYFALIK EL YAZISI NOTLARDAKİ 96 SORUNUN VE CEVABININ
+     * HİÇBİR EKSİK VEYA İLAVE OLMAKSIZIN BİREBİR SADIK VERİ SETİ
+     */
+    const UROLOGY_DATA = [
+      // 1-7: TAŞ HASTALIKLARI
+      {
+        id: 1,
+        cat: "tas",
+        catName: "Taş Hastalıkları",
+        q: "Taş hastasına yaklaşım, hangi radyolojik ve laboratuvar tetkikleri isteyelim? Metabolik değerlendirme?",
+        a: "• Metabolik değerlendirme: Ardışık iki gün 24 saat idrar toplanır. Gençlerde ve tek böbrekli olgularda metabolik değerlendirme yapılmalıdır.\n• Beslenme ve sıvı alışkanlıkları, coğrafya, aile öyküsü önemlidir. Sitrat taş oluşumunu engeller.\n• Kolik ağrı (Lomber bölgede).\n• Laboratuvar tetkikleri: İdrar analizi (pH, idrar kültürü, eritrosit ve lökosit varlığı, nitrit, kristalüri varlığı). Kan analizi: Kreatinin, ürik asit, Ca, Na, hemogram, CRP; Ca yüksek ise PTH istenir.\n• Radyolojik tetkikler: Direkt üriner sistem grafisi (takipte önemli). USG (ilk uygulanan). İntravenöz Pyelografi (obstrüksiyon derecesi). Retrograd Pyelografi. BT (En duyarlı). Kontrastsız Spiral BT: Altın standart (BT ürografi ve Renal sintigrafi kullanılmıyor). Görüntülemede taşın yeri, büyüklüğü, sertliği ve böbreğe etkisi bakılır."
+      },
+      {
+        id: 2,
+        cat: "tas",
+        catName: "Taş Hastalıkları",
+        q: "Taş tipleri nelerdir? (Kalsiyum içeren ve içermeyenler)",
+        a: "• Kalsiyum içeren taşlar (%80):\n  - Kalsiyum oksalat (%60): En sık görülen taş tipidir.\n  - Kalsiyum fosfat: Karbonat apatit, brusit.\n  - Sebepler: Hiperkalsiüri (en sık sebep), hiperoksalüri, hiperürikozüri, hipomagnezüri, hipositratüri.\n• Kalsiyum içermeyen taşlar:\n  - Ürik asit taşları: İdrar pH'sı asit olduğunda görülür. Obezite ile birlikte sık görülür.\n  - Struvit taşları (Enfeksiyon taşları): İdrar pH >7.2 olmalıdır. Amonyum magnezyum fosfat içerir. Sık idrar yolu enfeksiyonu (Proteus vb., üreaz salgılayan bakteriler) ile oluşur.\n  - Sistin taşları: Otozomal resesif (OR) kalıtsal bir hastalıktır. İdrar pH <6.5.\n  - Amonyum üratı: Üriner sistem enfeksiyonu, kronik diyare, malnütrisyon, hipopotasemi zemininde görülür.\n  - Ksantin taşları, Matriks taşları (E. coli enf.), Silika taşları.\n• Geyik boynuzu (Staghorn) taşı: Böbreğin toplayıcı sisteminin şeklini almış büyük taştır."
+      },
+      {
+        id: 3,
+        cat: "tas",
+        catName: "Taş Hastalıkları",
+        q: "Taş hastalarında hangi semptomlarla karşılaşırız? Ağrı lokalizasyonları nelerdir?",
+        a: "• Semptomlar: Kolik ağrı, pollaküri, dizüri, hematüri, bulantı-kusma, sıkışma hissi, ateş, taşikardi, hipotansiyon.\n• Hasta kliniğe yerinde duramayan şiddetli kolik ağrı ile gelir. Kostovertebral açı hassasiyeti (KVAH) olur.\n• Ağrı lokalizasyonu:\n  - Üst üreter taşları: Lomber bölgede ağrı.\n  - Orta üreter taşları: Orta ve alt kadranda ağrı.\n  - Alt üreter taşları: Testis ve labium majuslara vuran ağrı.\n  - Üreterovezikal darlıkta taş varsa: Sık tuvalete gitme hissi.\n• Hidronefroz ve sonrasında pyonefroz tablosu gelişebilir."
+      },
+      {
+        id: 4,
+        cat: "tas",
+        catName: "Taş Hastalıkları",
+        q: "Böbrek taşları, boyutu ve yerine göre tedavi seçenekleri nelerdir?",
+        a: "• Kısaltmalar: URS (Üreterorenoskopi), PNL (Perkütan nefrolitotomi), RIRC (Retrograd intrarenal cerrahi - Fleksibl URS), ESWL (Vücut dışı şok dalga litotripsi).\n• Alt polde değilse:\n  - 2 cm (20 mm) üzeri: PNL.\n  - 10 - 20 mm: ESWL ya da PNL, URS, RIRC.\n  - 10 mm (1 cm) altı: ESWL / RIRC, ikinci olarak PNL.\n• Alt polde ise:\n  - Tüm boyutlarda ESWL başarısını düşüren bir faktör yoksa ESWL; eğer başarıyı düşüren faktör varsa girişimsel yöntemler (Endoüroloji: PNL, URS, RIRC). Çoğunlukla URS seçenektir.\n• ESWL Kontrendikasyonları: Gebelik, kanama diyatezleri, üriner sistem enfeksiyonu, taş distalinde obstrüksiyon, batın arteryel anevrizmaları."
+      },
+      {
+        id: 5,
+        cat: "tas",
+        catName: "Taş Hastalıkları",
+        q: "Üreter taşlarında tedavi seçenekleri nelerdir? Neredeki ve hangi boyuttaki taşa hangi işlemi yapıyoruz?",
+        a: "• Proksimal üreterde:\n  - < 10 mm ise: ESWL, ikinci olarak URS.\n  - > 10 mm ise: ESWL veya URS.\n• Distal üreterde:\n  - < 10 mm ise: URS veya ESWL.\n  - > 10 mm ise: URS, ikinci olarak ESWL."
+      },
+      {
+        id: 6,
+        cat: "tas",
+        catName: "Taş Hastalıkları",
+        q: "Taş hastalarında medikal tedavi, rekürrensi önleme ve acil girişim endikasyonları nelerdir?",
+        a: "• Medikal Tedavi (En çok kullanılanlar):\n  - Potasyum sitrat: Kalsiyum oksalat, ürik asit, sistin taşlarında.\n  - Allopurinol: Kalsiyum oksalat, ürik asit, amonyum ürat taşlarında.\n  - Kaptopril: Sistin taşlarında.\n  - L-metiyonin: Enfeksiyon taşı, amonyum ürat, kalsiyum fosfat taşlarında.\n  - Sodyum bikarbonat: Kalsiyum oksalat, ürik asit, sistin taşlarında.\n  - Tiazid: Kalsiyum taşlarında.\n  - Tiopronin: Sistin taşlarında.\n• Rekürrensi önlemeye yönelik öneriler: Sıvı alımı günde 2.5 - 3 litre olmalı, dengeli beslenme, az tuzlu diyet, hayvansal protein kısıtlaması, VKİ 18-25 aralığında tutulmalı, düzenli fiziksel aktivite.\n• Taş hastasında acil girişim endikasyonları:\n  1. Şiddetli dirençli ağrı ve bulantı\n  2. İdrar yolu tıkanıklığı\n  3. Ateş ve eşlik eden idrar yolu enfeksiyonu (ürosepsis riski)\n  4. Tek böbrek varlığı\n  5. Progresif hidronefroz"
+      },
+      {
+        id: 7,
+        cat: "tas",
+        catName: "Taş Hastalıkları",
+        q: "ESWL nedir? Hangi hastalarda kullanılır? Kontrendikasyonları ve başarıyı düşüren faktörler nelerdir?",
+        a: "• Tanım: ESWL (Ekstrakorporeal Şok Dalga Litotripsi), vücut dışından şok dalgaları ile taşın odaklanarak kırılması işlemidir.\n• Kontrendikasyonları: Gebelik, kanama diyatezi (antikoagülan kullanımı), batında arteryel anevrizmalar, aktif üriner sistem enfeksiyonu, taş distalinde obstrüksiyon (tıkanıklık), odaklanmayı engelleyen ağır iskelet deformiteleri.\n• Başarıyı düşüren faktörler:\n  - Sert taşlar (Kalsiyum oksalat monohidrat, brusit, sistin)\n  - İnfundibulopelvik açının dik olması\n  - İnfundibulumun dar olması (< 5 mm)\n  - Obezite"
+      },
+
+      // 8-19: AÜSS & BPH & ÜRODİNAMİ
+      {
+        id: 8,
+        cat: "bph",
+        catName: "BPH & Alt Üriner Sistem",
+        q: "Alt üriner sistem semptomları (AÜSS) nelerdir? Boşaltım tipi ve depolama tipi semptomlar hangileridir?",
+        a: "• Boşaltım (Obstrüktif) tipi semptomlar: Dizüri (idrar yaparken zorlanma, ağrı), idrar akışında zayıflama (çatallanma, kesik kesik işeme), tam boşaltamama hissi (tenezm), ıkınarak işeme.\n• Depolama (İrritatif) tipi semptomlar: Sık idrara çıkma (Pollaküri), gece idrara kalkma (Noktüri), ani sıkışma hissi (Urgency), idrar kaçırma (İnkontinans), idrar tutamama.\n• Diğer bulgular: İdrar renginde değişiklik, bulanık idrar, köpüklü idrar, idrar kokusunda değişiklik."
+      },
+      {
+        id: 9,
+        cat: "bph",
+        catName: "BPH & Alt Üriner Sistem",
+        q: "AÜSS görülen ürolojik hastalıklar nelerdir?",
+        a: "• BPH (Benign Prostat Hiperplazisi): Pollaküri, noktüri, tenezm, dizüri.\n• Mesane iltihabı (Sistit).\n• İdrar yolu enfeksiyonları.\n• Üriner inkontinans."
+      },
+      {
+        id: 10,
+        cat: "bph",
+        catName: "BPH & Alt Üriner Sistem",
+        q: "BPH nedir? BPH hastalarında hangi semptomlar olur?",
+        a: "• Tanım: Benign Prostat Hiperplazisi; prostat bezinin malign olmayan büyümesidir. Transizyonel zondaki stromal ve glandüler epitelyal hücrelerin hiperplazisidir.\n• Etiyoloji: İlerlemiş yaş ve androjenler oluşumu için temel gerekliliklerdir.\n• Semptomlar: BPH obstrüksiyona ve AÜSS'ye neden olur. İşeme güçlüğü, ani sıkışma, yeterince idrarını boşaltamama hissi, akım hızının azalması, üriner retansiyon, tekrarlayan idrar yolu enfeksiyonları, mesane taşı oluşumu, inkontinans ve hematüri."
+      },
+      {
+        id: 11,
+        cat: "bph",
+        catName: "BPH & Alt Üriner Sistem",
+        q: "BPH hastalarında tanıda hangi tetkikleri istemeliyiz? Fizik muayenede ve rektal tuşede nelere dikkat edilir?",
+        a: "• Tanı Tetkikleri: PSA, tam idrar tetkiki (TİT - İYE ve mesane kanserini ekarte ettirir), serum kreatinin ve GFR (böbrek değerlendirmesi), idrar akım hızı (üroflowmetri), dolum sistometrisi (basınç-akım çalışması), rezidü idrar hacmi ölçümü (PVR).\n• Fizik Muayene: Suprapubik alan (glob vezikale varlığı), dış genital organlar ve alt ekstremiteler (ödem, nörolojik defisit) değerlendirilir.\n• Rektal Tuşe (DRE): Prostatın kıvamına (elastik mi, sert mi), boyutuna, yüzeyine (düzgün mü, nodül var mı), ağrı ve hassasiyetine dikkat edilir."
+      },
+      {
+        id: 12,
+        cat: "bph",
+        catName: "BPH & Alt Üriner Sistem",
+        q: "IPSS formu nedir, klinik önemi nedir?",
+        a: "• Tanım: IPSS (Uluslararası Prostat Semptom Skoru), alt üriner sistem semptomlarının değerlendirilmesinde kullanılan 7 adet semptom sorusu ve 1 adet yaşam kalitesini değerlendiren sorudan oluşan bir formdur.\n• Klinik Önemi: Mevcut alt üriner sistem semptomlarının derecesini, hastanın yaşam kalitesini ne derece etkilediğini nesnel olarak gösterir. Tedaviyi planlamada ve tedavi sonrası takipte kullanılan standart formdur."
+      },
+      {
+        id: 13,
+        cat: "bph",
+        catName: "BPH & Alt Üriner Sistem",
+        q: "Üroflowmetri testi nedir? Ne için yapılır? Testte hangi verilere dikkat edilir?",
+        a: "• Tanım: İdrarın fiziksel parametrelerinin ölçülmesinde kullanılan non-invaziv bir testtir. Prostat problemleri ve alt üriner sistem semptomlarını değerlendirmede kullanılır.\n• Dikkat edilen parametreler ve klinik anlamları:\n  - İdrar akış hızı (Qmax): Normalde saniyede 15 ml üzeri olmalıdır (>15 ml/sn).\n  - İdrar miktarı (İşenen hacim): Testin geçerli olması için en az 150 ml olmalıdır.\n  - İdrar süresi: Normal işeme süresi yaklaşık 20 - 40 saniyedir."
+      },
+      {
+        id: 14,
+        cat: "bph",
+        catName: "BPH & Alt Üriner Sistem",
+        q: "Postvoiding rezidüel (PVR) idrar nedir, klinik önemi nedir?",
+        a: "• Tanım: İdrar yapımı (miksiyon) sonrasında mesane içerisinde kalan idrardır.\n• Klinik Önemi: Prostat büyümesi, üretra darlığı (striktür), mesane boynu obstrüksiyonu ve nörojenik mesane hastalıklarının göstergesi olabilir. Aynı zamanda mesanede kalan idrar enfeksiyon riskini artırır ve uzun vadede böbrek fonksiyonlarına zarar verebilir (hidronefroz/böbrek yetmezliği)."
+      },
+      {
+        id: 15,
+        cat: "bph",
+        catName: "BPH & Alt Üriner Sistem",
+        q: "PSA nedir? Klinik önemi nedir? Hangi hastalıklarda yükselir? Normal değer aralığı nedir?",
+        a: "• Tanım: PSA (Prostat Spesifik Antijen), sadece prostat bezinden salgılanan bir proteindir. Prostattan kaynaklanan patolojilerde yükselerek belirteç rolü oynar. Yapılan prostat tedavilerinin takibinde önemli rol oynar.\n• Yükseldiği Durumlar: BPH, prostatit, prostat kanseri (Prostat CA), travma, rektal tuşe, yaşa bağlı büyüme.\n• Değer ve Yaşam Beklentisi: PSA'nın total değeri önemlidir. 10 yıl yaşam beklentisi olan kişilerden istenir. Normal değer aralığı 0 - 4 ng/mL kabul edilir.\n• Klinik Önemi: BPH, Prostat CA ve prostatit tanısında ve takibinde kritik öneme sahiptir."
+      },
+      {
+        id: 16,
+        cat: "bph",
+        catName: "BPH & Alt Üriner Sistem",
+        q: "Ürodinamik incelemeler nelerdir? Basınç-akım çalışması nedir, hangi hastalarda mutlaka yapılmalıdır?",
+        a: "• Ürodinamik Testler: Mesane ve üretra basınç ölçümleridir. Dolum sistometrisi, üroflowmetri, rezidüel idrar ölçümünü içerir. Destekleyici testlerdir. Sık idrara çıkan, inkontinansı olan, rekürren İYE geçiren, BPH şüphesi olan, zor idrar yapan (üriner retansiyon) hastalarda önerilir.\n• Basınç-Akım Çalışması: Mesane ve üretra içerisine yerleştirilen kateterler ile bu organların içindeki basınç değişikliklerinin ölçülmesidir.\n• Mutlaka Yapılması Gereken Durumlar:\n  - Arada kalınan şüpheli olgularda\n  - 50 yaş altı ve 80 yaş üstü hastalarda\n  - Nörolojik bozukluğu olanlarda\n  - İşenen miktar < 150 ml olanlarda\n  - Rezidü idrar (PVR) > 300 ml olanlarda\n  - Medikal tedaviye yanıtsız ve cerrahi düşünülen hastalarda"
+      },
+      {
+        id: 17,
+        cat: "bph",
+        catName: "BPH & Alt Üriner Sistem",
+        q: "BPH tanısı konulduktan sonra ilk basamak medikal tedavide hangi ilaç grupları yer alır?",
+        a: "• BPH'de ilk basamakta medikal tedavi yer almaktadır:\n  1. Alfa-blokerler: Alfuzosin, Doksazosin, Tamsulosin, Terazosin, Silodosin\n  2. 5-alfa redüktaz inhibitörleri (5-ARİ): Finasterid, Dutasterid\n  3. Antikolinerjikler\n  4. Beta-3 adrenoreseptör agonistleri\n  5. Fosfodiesteraz tip 5 (PDE5) inhibitörleri"
+      },
+      {
+        id: 18,
+        cat: "bph",
+        catName: "BPH & Alt Üriner Sistem",
+        q: "BPH medikal tedavisinde alfa-blokerler ve 5-alfa redüktaz inhibitörlerinin etki mekanizmaları ve yan etkileri nelerdir?",
+        a: "• Alfa-blokerler (Alfuzosin, Doksazosin, Tamsulosin, Terazosin, Silodosin):\n  - Etki: Prostat ve mesane boynu düz kaslarını gevşeterek mesane çıkım tıkanıklığının dinamik komponentini düzeltirler.\n  - Yan Etkiler: Hipotansiyon, ejakülasyon bozukluğu (retrograd ejakülasyon), katarakt cerrahisinde intraoperatif gevşek iris sendromu (IFIS), asteni (halsizlik), baş dönmesi ve baş ağrısı.\n• 5-alfa Redüktaz İnhibitörleri (Finasterid, Dutasterid):\n  - Etki: İntraprostatik DHT (Dihidrotestosteron) düzeyini %85-90 düşürerek prostat büyümesini inhibe ederler. Apoptozisi ve involüsyonu uyarırlar (statik komponenti küçültürler).\n  - Yan Etkiler: Erektil disfonksiyon, libido düşüklüğü, ejakülat volümünde azalma ve jinekomasti."
+      },
+      {
+        id: 19,
+        cat: "bph",
+        catName: "BPH & Alt Üriner Sistem",
+        q: "BPH'de cerrahi tedavi endikasyonları, cerrahi seçenekleri ve karar kriterleri nelerdir?",
+        a: "• Cerrahi Endikasyonlar:\n  - Tekrarlayan üriner retansiyon\n  - Mesane çıkım obstrüksiyonuna bağlı hidronefroz ve böbrek yetmezliği\n  - Makroskobik hematüri\n  - Mesanede taş oluşumu\n  - Tekrarlayan üriner sistem enfeksiyonları\n  - Medikal tedavinin yanıtsızlığı (göreceli endikasyon)\n• Cerrahi Seçenekler: TURP (Transüretral prostat rezeksiyonu), TUIP, Bipolar TURP, Açık prostatektomi, Lazer prostatektomi (HoLEP vb.), TUMT, TUNA.\n• Karar Kriterleri: Prostatın boyutuna, hangi bölgesinin hiperplaziye uğradığına, cerrahın elindeki malzemelere ve hastanın kanama riskine/miktarına göre karar verilir."
+      },
+
+      // 20: ENÜREZİS NOKTURNA
+      {
+        id: 20,
+        cat: "renal_pediatri",
+        catName: "Böbrek & Pediatri & Konjenital",
+        q: "Enürezis nokturna nedir? Tipleri, tanı ve tedavisinde neler yapılır?",
+        a: "• Tanım: Enürezis nokturna, herhangi bir nörolojik sorun olmaksızın 5 yaşından büyük çocuklarda görülen uyku sırasında istem dışı idrar kaçırma durumudur.\n  - Primer enürezis: Çocuğun hiç gece kuru kalamamış olması durumudur.\n  - Sekonder enürezis: En az 6 ay kuru kaldıktan sonra semptomların yeniden başlaması durumudur.\n• Tanı: Temel amaç altta yatan başka bir organik hastalık var mı ayrımını yapmaktır. Aile öyküsü, işeme günlüğü çok önemlidir. Fizik muayenede travmatik sebepler, genital darlıklar, asimetriler ve refleksler incelenir. Laboratuvar olarak glikozüri, proteinüri, hematüri, pyüri, bakteriüri bakılır. Radyolojik görüntülemeye rutin olarak gerek yoktur.\n• Tedavi: İzlem ile maturasyonun tamamlanması beklenebilir. Psikolojik destek ve motivasyon verilir. Enürezis alarmı (neme duyarlı sensörle uyandırma) kullanılır. Medikal tedavi: Desmopressin, Antikolinerjikler (Oksibutinin, Tolterodin), Trisiklik antidepresanlar."
+      },
+
+      // 21-23: HEMATÜRİ & AYIRICI TANI
+      {
+        id: 21,
+        cat: "enfeksiyon",
+        catName: "İYE & Enfeksiyon & Hematüri",
+        q: "Hematüri nedir? Mikroskobik hematüri tanımı, görüldüğü hastalıklar ve klinik önemi?",
+        a: "• Hematüri: İdrarda kan görülmesidir. Büyük büyütmede her sahada 3'ten fazla eritrosit bulunmasıdır.\n• Mikroskobik hematüri: İdrarda gözle görülür renk değişikliği olmaksızın mikroskop altında eritrositlerin saptanmasıdır. İdrarın 1 ml'sinde: 2-5 hafif, 6-20 orta, >20 şiddetli kabul edilir. Gros (makroskopik) hematüride ise 1 ml'de 1000'den fazla eritrosit bulunur.\n• Görüldüğü Hastalıklar: Mesane Ca, üriner taşlar, BPH, üst üriner sistem tümörleri, Prostat CA, böbrek ve mesane enfeksiyonları, endometriozis, glomerülonefrit, travma ve yaralanmalar.\n• Klinik Önemi: Hematüri beraberinde maligniteler dahil birçok ciddi hastalığı getirebileceğinden klinik olarak mutlaka etiyolojik açıdan aydınlatılması gereken bir bulgudur. Eş zamanlı pyüri ve dizüri ile gelebilir."
+      },
+      {
+        id: 22,
+        cat: "enfeksiyon",
+        catName: "İYE & Enfeksiyon & Hematüri",
+        q: "Hematüri tanısında hangi tetkikler istenir? Sistoskopi nedir ve ne amaçla yapılır?",
+        a: "• İstenen Tetkikler: Tam idrar tahlili (TİT), idrar kültürü (enfeksiyon ayrımı), Kreatinin ve BUN (böbrek fonksiyonu), Tam kan sayımı (kanama derecesi), USG (tümör, taş için ilk yapılacak olan), Kontrastlı BT veya MR (tümör, taş tespiti), Sistoskopi.\n• Sistoskopi: Tüp şeklinde, ucunda kamera ve ışık olan bir alettir. Üretra ve mesane içerisinin detaylı görüntülenmesini ve biyopsi alınmasını sağlar.\n• Sistoskopi Endikasyonu: Makroskobik hematürisi olan ve USG'de kitle saptanmasa bile kitle ekarte edilemeyen hastalarda sistoskopi yapılır (tanıda altın standart).\n• Önemli notlar: Böbrekler en sık künt travmayla yaralanır, BT çekilir. Üst üriner sistem tümörleri kanamayla gelir. Üreterin doğal darlıkları: Pelvik bileşke, iliak damarları çaprazladığı yer ve üreterovezikal bileşkedir. BCG enfeksiyonu, obstrüksiyon veya gebelikte sistoskopi ertelenir/yapılmaz."
+      },
+      {
+        id: 23,
+        cat: "enfeksiyon",
+        catName: "İYE & Enfeksiyon & Hematüri",
+        q: "Makroskopik hematüride ayırıcı tanı ve hematürili hastada malignite risk faktörleri nelerdir?",
+        a: "• Ayırıcı Tanı: İdrar yolu enfeksiyonu, üriner taşlar, üriner sistem tümörleri, ilaç yan etkileri, koagülasyon bozuklukları, arter anevrizmaları, SLE, glomerülonefrit, böbrek yetmezliği, vasküler anomaliler, böbrek kistleri, travmalar.\n• Malignite Risk Faktörleri:\n  - Yaş > 40 yaş (notta: 40 yaş üstü 7/10 problem malignite olabilir)\n  - Sigara kullanımı\n  - Aile öyküsü\n  - Böbrek taşları\n  - Kimyasal karsinojenlere maruziyet\n  - Hipertansiyon\n  - Von Hippel-Lindau sendromu\n  - Radyasyon maruziyeti, irritatif işeme öyküsü"
+      },
+
+      // 24-26: EREKTİL DİSFONKSİYON (ED)
+      {
+        id: 24,
+        cat: "androloji",
+        catName: "Androloji & İnfertilite & ED",
+        q: "Erektil disfonksiyon (ED) nedir? Ereksiyonun fizyolojisi ve sınıflaması nasıldır?",
+        a: "• Tanım: Cinsel ilişkiyi sağlayabilecek ve sürdürebilecek derecede ereksiyon oluşturulamaması veya devam ettirilememesidir.\n• Ereksiyon Fizyolojisi: Cinsel uyarıyla beraber beyinden genital bölgeye sinyaller gönderilir. Bu sinyaller ile penisteki arterlerin düz kasları gevşer, kan akışı artar, korpus kavernozumlar kanla dolar ve penis sertleşir. Ereksiyon sırasında venöz dolaşım korporal venooklüzif mekanizma aktivasyonu ile kapatılarak ereksiyon sürdürülür (Arteryel dilatasyon, trabeküler düz kas gevşemesi ve korporal venooklüzif mekanizma aktivasyonu). Tek amaç penise giden Nitrik Oksit (NO) miktarını artırmaktır.\n• Sınıflama:\n  1. Organik: Vaskülojenik, Nörojenik, Anatomik, Endokrinojenik\n  2. Psikojenik"
+      },
+      {
+        id: 25,
+        cat: "androloji",
+        catName: "Androloji & İnfertilite & ED",
+        q: "ED risk faktörleri, tanıda dikkat edilecekler ve uygulanan özel tanısal testler nelerdir?",
+        a: "• Risk Faktörleri: Yaşlanma, sigara, kalp hastalıkları, hipertansiyon, DM (Diyabet), obezite, alkol ve madde kullanımı, stres, anksiyete, depresyon, nörolojik hastalıklar, sedanter yaşam.\n• Tanıda Sorgulama: Ereksiyon kalitesi, gece ereksiyonu varlığı, süresi, ne zaman başladığı, ejakülasyon süresi, cinsel istek (libido), kadın partnerin durumu, sistemik hastalıklar. Sabah ereksiyonunun olması psikojenik lehinedir.\n• Fizik Muayene: Peyronie plağı, prostat muayenesi, testis hacmi, tiroid nodülü, nabız ve tansiyon.\n• Laboratuvar: Hemogram, TİT, glikoz, lipid profili, total testosteron, kreatinin, PSA.\n• Özel Testler:\n  - NPT (Nokturnal Penil Tümesans) Testi: Gece ereksiyonlarının şiddeti ve süresi kaydedilir; organik ile psikojenik ayrımını sağlar.\n  - İntrakavernozal Enjeksiyon ve Stimülasyon Testi: Prostaglandin E1 verilerek ereksiyon gözlenir (10 dk içinde başlayıp >15 dk süren tam ereksiyon normal kabul edilir).\n  - Penil Doppler USG: Kan akımını değerlendirir."
+      },
+      {
+        id: 26,
+        cat: "androloji",
+        catName: "Androloji & İnfertilite & ED",
+        q: "Erektil disfonksiyon tedavi basamakları nelerdir? İlaç mekanizmaları ve protez çeşitleri?",
+        a: "• Genel Yaklaşım: Yaşam stili değişikliği, kardiyovasküler risk yönetimi ve psikolojik danışmanlık.\n• 1. Basamak Tedavi:\n  - PDE5 İnhibitörleri: Sildenafil, Tadalafil, Vardenafil, Avanafil, Udenafil, Mirodenafil. Mekanizma: cGMP'yi parçalayan PDE5 enzimini inhibe ederek cGMP düzeyini artırırlar ve penil arteryel dilatasyonu sağlarlar.\n  - Testosteron hormonu replasmanı (hipogonadizm varsa).\n  - Vakum ereksiyon cihazları.\n• 2. Basamak Tedavi:\n  - İntrakavernozal enjeksiyon: Papaverin, Prostaglandin E1 (Alprostadil), Fentolamin (kombinasyonlar).\n  - İntraüretral tedavi: PGE1 (Alprostadil).\n• 3. Basamak Tedavi (Cerrahi):\n  - Venöz ligasyon, penil revaskülarizasyon cerrahisi.\n  - Penil Protez İmplantasyonu: 2 çeşittir:\n    1. Bükülebilir (Malleable - yarı sert)\n    2. Şişirilebilir (Inflatable - 2 veya 3 parçalı pompa sistemli, genel tercih)."
+      },
+
+      // 27-31: İNFERTİLİTE & VARİKOSEL & SPERMİOGRAM & AZOOSPERMİ
+      {
+        id: 27,
+        cat: "androloji",
+        catName: "Androloji & İnfertilite & ED",
+        q: "Erkek infertilitesi tanımı, risk faktörleri ve fizik muayenede dikkat edilecekler nelerdir?",
+        a: "• Tanım: 1 yıl boyunca korunmasız düzenli cinsel ilişkiye rağmen erkekten kaynaklanan nedenlerle gebelik elde edilememesi durumudur.\n• Risk Faktörleri: Skrotal ısı artışı (Varikosel), ürogenital enfeksiyonlar, seksüel disfonksiyon, konjenital anomaliler (kriptorşidizm), endokrin bozukluklar, idiyopatik semen bozuklukları, kemoterapi/radyoterapi öyküsü, 5-alfa redüktaz inhibitörleri, alfa blokerler, anabolik steroid kullanımı, geçirilmiş kasık fıtığı cerrahisi (vaz deferens yaralanması riski).\n• Fizik Muayene: Genel habitus, jinekomasti (Klinefelter sendromu), penis anomalileri (kurvatur, fimozis, hipospadias), testislerin skrotumda olup olmadığı, boyut ve kıvamı, vaz deferens varlığı, varikosel kontrolü, asimetri ve rektal tuşe ile prostat muayenesi."
+      },
+      {
+        id: 28,
+        cat: "androloji",
+        catName: "Androloji & İnfertilite & ED",
+        q: "Varikosel nedir? Klinik önemi, dereceleri ve tedavisi nasıldır?",
+        a: "• Tanım: Testisin pleksus pampiniformis venlerinin anormal dilatasyonu ve kıvrımlı hal almasıdır.\n• Klinik Önemi: Skrotal ısıda artışa ve testiküler ısı regülasyonunun bozulmasına yol açarak infertiliteye neden olur. İnfertil erkeklerin %35 - %40'ında palpe edilebilen varikosel mevcuttur.\n• Derecelendirme (Evreleme):\n  - Derece 1: Küçük, yalnızca Valsalva manevrası ile palpe edilebilen.\n  - Derece 2: İstirahat halinde gözle görülmeyen fakat palpe edilebilen.\n  - Derece 3: Dışarıdan bakıldığında gözle görülebilen büyüklükte olan.\n• Tedavi: İzlem (semptomsuz olgularda), Cerrahi (Mikrocerrahi subinguinal varikoselektomi ile venler bağlanıp kapatılır), Embolizasyon (kateter ile sklerozan madde enjeksiyonu)."
+      },
+      {
+        id: 29,
+        cat: "androloji",
+        catName: "Androloji & İnfertilite & ED",
+        q: "Erkek infertilitesinde laboratuvar testleri ve spermiogramın normal değerleri nelerdir?",
+        a: "• İstenen Tetkikler: Hormonal değerlendirme (FSH, LH, Total Testosteron, Prolaktin), kromozom analizi (Karyotip), Y kromozomu mikrodelesyon analizi, antisperm antikor, skrotal USG, transrektal USG (TRUS), pelvik BT ve MR.\n• Spermiogram (Semen Analizi): 3 - 5 günlük cinsel perhiz sonrası semenin incelenmesidir.\n• Normal Değerler (WHO):\n  - Hacim: &ge; 1.5 mL\n  - pH: &ge; 7.2\n  - Sperm konsantrasyonu: &ge; 15 milyon / mL\n  - Total sperm sayısı: &ge; 39 milyon / ejakülat\n  - Hareketlilik (Motilite): &ge; %40 (toplam hareketli)\n  - Canlılık (Vitalite): &ge; %58\n  - Morfoloji (Kruger): &ge; %4 normal form"
+      },
+      {
+        id: 30,
+        cat: "androloji",
+        catName: "Androloji & İnfertilite & ED",
+        q: "Oligospermi, Astenospermi, Teratospermi, Aspermi ve Azoospermi terimleri ne anlama gelir?",
+        a: "• Oligospermi: Ejakülasyonda bulunan sperm konsantrasyonunun < 15 milyon/mL olması (normalin altında olması).\n• Astenospermi: Düşük sperm hareketliliği (%40'ın altında motilite).\n• Teratospermi: Normal morfolojideki sperm oranının %4'ün altında olması.\n• Aspermi: Ejakülatın hiç çıkmaması (retrograd ejakülasyon veya anejakülasyon).\n• Azoospermi: Ejakülatta hiç sperm hücresinin bulunmamasıdır."
+      },
+      {
+        id: 31,
+        cat: "androloji",
+        catName: "Androloji & İnfertilite & ED",
+        q: "Azoospermi nedir? Tanısı, istenecek genetik testler, tipleri ve tedavi yaklaşımı?",
+        a: "• Tanım: Ejakülatta santrifüj sonrası dahi hiç sperm hücresi bulunmamasıdır. Tanı en az 2 ayrı spermiogram ile konur.\n• İstenen Genetik Testler: Karyotip analizi (47,XXY Klinefelter vb.), Y kromozomu mikrodelesyon analizi (AZF gen delesyonları: AZFa, AZFb, AZFc).\n• Görüldüğü Durumlar: Vaz deferens tıkanıklığı veya agenezisi (Kistik fibrozis/CFTR mutasyonu), testiküler yetmezlik, hormonal eksiklikler, Y kromozom mikrodelesyonu, varikosel, ürogenital enfeksiyonlar.\n• Tipleri:\n  1. Obstrüktif Azoospermi (Tıkayıcı tip)\n  2. Non-obstrüktif Azoospermi (Tıkayıcı olmayan tip - spermatogenez yetmezliği)\n• Yaklaşım: Altta yatan sebep bulunur. Obstrüksiyon yoksa Mikro-TESE (Testiküler sperm ekstraksiyonu) yapılarak sperm aranır ve IVF/ICSI (Tüp bebek) yöntemleri uygulanır."
+      },
+
+      // 32: İDRAR YOLU ENFEKSİYONLARI (İYE)
+      {
+        id: 32,
+        cat: "enfeksiyon",
+        catName: "İYE & Enfeksiyon & Hematüri",
+        q: "İdrar yolu enfeksiyonu (İYE) sınıflaması, risk faktörleri, tanısı ve tedavisi nasıldır?",
+        a: "• Sınıflama:\n  - Komplike olmayan İYE: Ürolojik anomali veya risk faktörü bulunmayan kadın hastalar.\n  - Komplike İYE: Erkek hastalar, gebeler, diyabetikler, anatomik bozukluğu veya kateteri olanlar.\n  - Rekürren İYE: Yılda &ge;3 kez veya 6 ayda &ge;2 kez tekrarlayan enfeksiyon.\n  - Kateter ile ilişkili İYE: Kateter takıldıktan sonra 48 saat içinde gelişen enfeksiyon.\n  - Ürosepsis: Enfeksiyonun sistemik organ yetmezliği tablosuna ilerlemesi.\n• Risk Faktörleri: Kadınlarda geçirilmiş İYE, sık cinsel ilişki, kontrasepsiyon, gebelik, rezidü idrar, östrojen eksikliği, sistosel, mesane divertikülü, hijyensizlik. Erkeklerde BPH, prostat sekresyon azalması, sonda kullanımı, sünnetsizlik, homoseksüellik.\n• Tanı: Anamnez, KVAH ve suprapubik hassasiyet, TİT (pyüri, bakteriüri, lökosit esteraz, nitrit pozitifliği), İdrar kültürü. Radyoloji (USG, BT, sintigrafi) komplikasyon, obstrüksiyon veya rekürrenste istenir.\n• Tedavi Yaklaşımları:\n  - Akut komplike olmayan sistit: Kültür sonucuna göre veya tek doz Fosfomisin trometamol.\n  - Akut pyelonefrit: Komplike değilse oral Florokinolonlar.\n  - Kronik pyelonefrit: Standart tedavisi yoktur; hazırlayan faktörlere yönelik cerrahi/medikal tedavi.\n  - Ksantogranülamatöz pyelonefrit: Antibiyotik baskısı altında parsiyel veya total nefrektomi.\n  - Renal abse: Geniş spektrumlu antibiyotik; drenaj gerektirebilir."
+      },
+
+      // 33: CİNSEL YOLLA BULAŞAN HASTALIKLAR (CYBH)
+      {
+        id: 33,
+        cat: "enfeksiyon",
+        catName: "İYE & Enfeksiyon & Hematüri",
+        q: "Cinsel yolla bulaşan hastalıkların (CYBH) tipleri, tanı ve tedavileri nelerdir?",
+        a: "• Tipleri:\n  1. Genital Ülserli Hastalıklar: Sifiliz, Şankroid, Granüloma inguinale, Genital herpes, Lenfogranüloma venereum (LGV).\n  2. Genital Siğiller: Genital wart (Kondilom), Molluskum kontagiozum.\n  3. Akıntılı Hastalıklar: Gonokokal üretrit (Gonore), Nongonokokal üretrit (NGU).\n  4. Diğerleri: Hepatit, HIV/AIDS, paraziter enfeksiyonlar.\n• Tanı ve Tedaviler:\n  - Sifiliz (Treponema pallidum): Tanı: Karanlık alan mikroskopisi, VDRL, RPR (tarama/tedavi takibi), FTA-ABS, TPHA (doğrulama). Tedavi: Benzatin Penisilin G (tek doz İM). Alerjide: Doksisiklin, Tetrasiklin, Seftriakson.\n  - Granüloma inguinale (Donovanoz): Tanı: Doku kazıntısında Donovan cisimcikleri. Tedavi: Tetrasiklin, Doksisiklin, Trimetoprim.\n  - Şankroid (Haemophilus ducreyi): Tanı: Ülserden etken izolasyonu, PCR. Tedavi: Azitromisin, Seftriakson, Eritromisin.\n  - Herpes genitalis (HSV tip 2): Tanı: Klinik görünüm, viral kültür, HSV IgG/IgM antikor, PCR. Tedavi: Asiklovir, Valasiklovir, Famsiklovir.\n  - HPV Enfeksiyonu: Tanı: Klinik görünüm, PCR, biyopsi. Medikal: Podofilin, TCA, İmikimod krem. Cerrahi: Eksizyon, elektrokoter, CO2 lazer, kriyoterapi.\n  - LGV (Chlamydia trachomatis L1-L3): Tanı: Hücre kültürü, seroloji. Tedavi: Doksisiklin.\n  - Gonore (Neisseria gonorrhoeae): Tanı: Kültür, Gram boyama (hücre içi diplokok). Tedavi: Seftriakson, Doksisiklin, Siprofloksasin, Ofloksasin.\n  - Nongonokokal Üretrit (Klamidya vb.): Tanı: Hücre kültürü, ELISA, PCR. Tedavi: Azitromisin, Doksisiklin, Eritromisin."
+      },
+
+      // 34-36: AKUT SKROTUM & TORSİYON & FİMOZİS
+      {
+        id: 34,
+        cat: "aciller",
+        catName: "Ürolojik Aciller & Travma",
+        q: "Akut skrotumlu hastaya yaklaşım nasıldır? Akut epididimoorşit tanı ve tedavisi nedir? Prehn bulgusu?",
+        a: "• Akut Skrotum: Testis ve skrotal kesenin kızarıklık, şişlik ve ağrı ile karakterize ürolojik acil tablosudur. Hızlı tanı ve müdahale şarttır.\n• Ayırıcı Tanı: Testis torsiyonu, apendiks testis torsiyonu, epididimit, epididimoorşit, skrotal apse, Fournier gangreni, strangüle fıtık, hidrosel, travma, skrotal ödem, vaskülit, testis tümörü, spermatosel, varikosel.\n• Akut Epididimoorşit:\n  - Tanı: Epididimitin testise uzanmasıdır. Giderek artan (>24 saati aşan) ağrı, skrotal ısı artışı ve hassasiyet vardır. Testis Doppler USG'de epididim ve testis kanlanması ARTIŞI izlenir (bu bulgu ile torsiyondan kesin olarak ayrılır). Dizüri ve üretral akıntı eşlik edebilir.\n  - Prehn Bulgusu: Testis yukarı kaldırıldığında ağrının azalmasıdır (Prehn + veya ağrı azalır). Torsiyonda ise testis kaldırılınca ağrı azalmaz, hatta artar.\n  - Tedavi: Antibiyotik, antiinflamatuar ilaçlar, analjezikler, yatak istirahati ve skrotal elevasyon temeldir. İleri derecede apse veya infarkt varsa cerrahi drenaj/orşiektomi yapılır."
+      },
+      {
+        id: 35,
+        cat: "aciller",
+        catName: "Ürolojik Aciller & Travma",
+        q: "Testis torsiyonu nedir? Tanısı, Prehn ve kremaster refleksi, tedavisi ve zaman sınırı nasıldır?",
+        a: "• Tanım: Testisin kendi spermatik kordu etrafında dönmesi sonucu venöz dönüşün bozulması, ödem gelişmesi ve arteryel beslenmenin kesilmesi ile karakterize iskemi tablosudur.\n• Tanı: Ani başlayan şiddetli testis ağrısı ve şişlik ile gelir. Etkilenen testis kordon kısaldığı için yüksek skrotal pozisyondadır. Kremaster refleksi KAYBOLUR. Testis elevasyonu ile ağrı azalmaz veya artar (Prehn negatif / patolojik). İdrar ve kan tahlili normaldir. Apendiks testis torsiyonunda ise testisin üst polünde 'mavi nokta belirtisi' (blue dot sign) görülür.\n• Görüntüleme: Skrotal Renkli Doppler USG'de testiste kan akımının olmaması veya belirgin azalması tanı koydurucudur.\n• Tedavi ve Zaman Sınırı: Acil eksplorasyon ve detorsiyon yapılmalıdır. İlk 6 saat içerisinde müdahale edilmelidir; 6 saatten sonra geri dönüşümsüz iskemi ve nekroz başlar. Karşı testise de profilaktik orşiopeksi yapılır."
+      },
+      {
+        id: 36,
+        cat: "aciller",
+        catName: "Ürolojik Aciller & Travma",
+        q: "Fimozis ve parafimozis nedir? Farkları ve aciliyet durumları nelerdir?",
+        a: "• Fimozis: Penisin prepisyumunun (sünnet derisi) dar olması nedeniyle geriye doğru çekilememesi durumudur.\n• Parafimozis: Prepisyumun geriye çekildikten sonra tekrar eski normal yerine getirilememesi durumudur. Prepisyum penis boynunu boğar, venöz dönüşü engeller, glansta şiddetli ödem, iskemi ve nekroza yol açabilir. Bu nedenle ürolojik bir acildir ve derhal manuel redüksiyon veya dorsal yarık (cerrahi) yapılmalıdır."
+      },
+
+      // 37-40: PRİAPİZM & PENİL FRAKTÜR & FOURNİER & BÖBREK TRAVMASI
+      {
+        id: 37,
+        cat: "aciller",
+        catName: "Ürolojik Aciller & Travma",
+        q: "Priapizm nedir? Tipleri, risk faktörleri ve iskemik priapizmin saatlere göre tedavisi?",
+        a: "• Tanım: Cinsel uyarıdan bağımsız olarak 4 saatten uzun süren ağrılı penil ereksiyon halidir. Ürolojik bir acildir.\n• Tipleri: 1. İskemik (Düşük akımlı - veno-oklüzif), 2. Non-iskemik (Yüksek akımlı - fistül), 3. Rekürren (Stuttering).\n• Risk Faktörleri: Orak hücreli anemi, lösemi, ereksiyon ilaçlarının (PDE5i, intrakavernozal) aşırı kullanımı, travma, spinal kord yaralanmaları.\n• İskemik Priapizm Tedavi Protokolü (Saatlere göre):\n  - İlk 24 saat: Korporal aspirasyon ve irrigasyon &rarr; İşe yaramazsa Sempatomimetikler (Fenilefrin enjeksiyonu) &rarr; İşe yaramazsa T-Şant &rarr; İşe yaramazsa Bilateral T-Şant.\n  - 24 - 48 saat: Korporal aspirasyon &rarr; T-Şant &rarr; Bilateral T-Şant.\n  - 48 - 72 saat: T-Şant; nekroz saptanırsa doğrudan Penil Protez takılır.\n  - > 72 saat: Doğrudan Penil Protez implantasyonu yapılır.\n• Non-İskemik Tedavisi: Helisin arterde ise gözlem ve kompresyon; kavernöz arterde ise androjen ablasyonu, işe yaramazsa anjiyografik embolizasyon veya cerrahi.\n• Rekürren Tedavi: GnRH agonistleri, 5-ARİ veya ketokonazol ile testosteron düşürülür."
+      },
+      {
+        id: 38,
+        cat: "aciller",
+        catName: "Ürolojik Aciller & Travma",
+        q: "Penil fraktür nedir? Tanısı, fizik muayene bulguları (patlıcan deformitesi, rolling sign) ve tedavisi nasıldır?",
+        a: "• Tanım: Erektil haldeki penisin ani ve künt bir zorlanmaya maruz kalması sonucu korpus kavernozumları saran tunika albugineanın yırtılmasıdır.\n• Klinik ve Anamnez: Cinsel ilişki sırasında peniste 'çıt / kırılma' sesi duyulması, ereksiyonun ani kaybı, şiddetli ağrı, hızlı şişlik ve derialtı yaygın hematom.\n• Fizik Muayene Bulguları:\n  - Buck fasyası sağlamsa: Kan penis şaftında sınırlı kalır ve 'patlıcan deformitesi' oluşur; fraktürün aksi yönüne deviasyon izlenir.\n  - Buck fasyası da yırtılmışsa: Kan perine ve skrotuma yayılır, 'kelebek tarzı hematom' oluşur.\n  - Rolling Sign: Rüptüre bağlı tunika albuginea açıklığının parmakla palpe edilmesidir.\n• Tedavi: Acil cerrahi eksplorasyondur. Hematom boşaltılır ve tunika albuginea defekti primer olarak sütüre edilir. Korpus kavernozum sağlamsa çok nadir konservatif kalınabilir fakat komplikasyonu yüksektir."
+      },
+      {
+        id: 39,
+        cat: "aciller",
+        catName: "Ürolojik Aciller & Travma",
+        q: "Fournier gangreni nedir? Hangi hastalarda sık görülür? Tedavisi ve mortalitesi nedir?",
+        a: "• Tanım: Perianal ve genital bölgede başlayan, fasya boyunca hızla yayılan mikst aerop-anaerop nekrotizan fasiittir. Hayatı tehdit eden ürolojik acildir.\n• Semptomlar: Şiddetli ağrı, şişlik, kızarıklık, morarma, krepitasyon (gaz oluşumu), kötü kokulu akıntı ve sistemik sepsis bulguları.\n• Sık Görüldüğü Hastalar: Diabetes Mellitus (Diyabet), immünsupresif hastalar, kronik alkol ve madde bağımlılığı, yakın zamanda anorektal/ürolojik cerrahi geçirenler, kronik böbrek yetmezliği, morbid obezite ve kötü hijyeni olanlar.\n• Tedavi ve Mortalite:\n  - İlk olarak agresif hemodinamik resüsitasyon ve sıvı açığının kapatılması.\n  - Acil ve geniş cerrahi debridman (tüm nekrotik dokular temizlenir).\n  - Geniş spektrumlu kombine antibiyoterapi.\n  - Gerekirse yara alanı için sekonder greftleme.\n  - Mortalite oranı yaklaşık %16'dır."
+      },
+      {
+        id: 40,
+        cat: "aciller",
+        catName: "Ürolojik Aciller & Travma",
+        q: "Böbrek travmasında derecelendirme (Derece 1-5) nasıldır ve yaklaşımları nelerdir?",
+        a: "• Genel Bilgi: Künt karın travmalarının %8 - %10'unda böbrek travması görülür. Tanıda altın standart kontrastlı abdominal BT'dir. Hipotansiyon ve taşikardi instabil hastayı gösterir.\n• Derecelendirme (AAST):\n  - Derece 1: Kontüzyon veya genişlemeyen subkapsüler hematom; laserasyon yoktur.\n  - Derece 2: Genişlemeyen perirenal hematom; kortikal laserasyon < 1 cm; üriner ekstravazasyon yoktur.\n  - Derece 3: Kortikal laserasyon > 1 cm; toplayıcı sisteme uzanmaz, üriner ekstravazasyon yoktur.\n  - Derece 4: Kortikomedüller bileşkeden toplayıcı sisteme uzanan laserasyon (üriner ekstravazasyon var) VEYA ana renal arter/ven hasarı / segmental enfarkt.\n  - Derece 5: Parçalanmış (shattered) böbrek ya da renal pedikülün tam kopması/avülsiyonu.\n• Tedavi Yaklaşımı:\n  - Derece 1 - 2: Hemodinamik stabilse konservatif izlem.\n  - Derece 3: Duruma göre konservatif tedavi veya anjiyoembolizasyon.\n  - Derece 4: Stabil ve parankimal ise konservatif / anjiyoembolizasyon; vasküler yaralanma varsa nefrektomi veya onarım.\n  - Derece 5: Konservatif tedavi uygulanamaz; acil cerrahi eksplorasyon (nefrektomi)."
+      },
+
+      // 41-44: İNKONTİNANS & BOTOKS
+      {
+        id: 41,
+        cat: "bph",
+        catName: "BPH & Alt Üriner Sistem",
+        q: "Üriner inkontinans nedir? Kaç tipi vardır? Tanı yöntemleri ve hangi hastalara ürodinami yapılır?",
+        a: "• Tanım: Sosyal ve hijyenik sorunlara yol açan, yaşam kalitesini bozan istemsiz idrar kaçırma şikayetidir. Kadınlarda daha sık görülür.\n• Risk Faktörleri: Obezite, gebelik, doğumlar, östrojen eksikliği, pelvik taban kas güçsüzlüğü.\n• 5 İnkontinans Tipi: 1. Stres Tip, 2. Urge (Sıkışma) Tip, 3. Mikst Tip, 4. Taşma (Overflow) Tipi, 5. Fonksiyonel Tip.\n• Tanı: Ayrıntılı anamnez (en önemli tanı yöntemi), işeme günlüğü, fizik muayene (öksürük stres testi, Q-tip testi ile üretra hipermobilitesi, pelvik organ prolapsusu kontrolü), ürodinami.\n• Ürodinami Yapılma Endikasyonları: Şikayet ve fizik bulgular arasında uyumsuzluk varsa, cerrahi tedavi planlanıyorsa, tedaviye dirençli aşırı aktif mesane varlığında, başarısız cerrahi öyküsünde, obstrüktif semptomlar ve altta yatan nörolojik hastalık varlığında mutlaka yapılır."
+      },
+      {
+        id: 42,
+        cat: "bph",
+        catName: "BPH & Alt Üriner Sistem",
+        q: "Urge inkontinans nedir ve tedavisi nasıldır? Kullanılan ilaçlar ve yan etkileri?",
+        a: "• Tanım: Ani idrar yapma hissi (sıkışma) ile birlikte kontrolsüzce idrar kaçırmadır. Temel mekanizma detrusor kasının istemsiz kasılmasıdır (Aşırı aktif mesane).\n• Davranışsal Tedavi: Sıvı kısıtlaması/düzenlemesi, kafein ve sigaradan uzak durma, kilo verme, mesane eğitimi, pelvik taban egzersizleri (Kegel).\n• Medikal Tedaviler:\n  - Antimuskarinikler (Antikolinerjikler): Oksibutinin, Tolterodin, Darifenasin. Dar açılı glokomda KONTRENDİKASYONDUR!\n  - Beta-3 Adrenoseptör Agonistleri: Mirabegron.\n  - İmipramin, lokal östrojenler.\n• 3. Basamak: İntradetrüsör Botulinum toksini (Botoks) enjeksiyonu, sakral nöromodülasyon.\n• Medikal Tedavi Yan Etkileri: Ağız kuruluğu, kabızlık, bulanık görme, taşikardi, uykusuzluk, baş dönmesi, baş ağrısı, halsizlik, mide bulantısı, reflü, idrar retansiyonu."
+      },
+      {
+        id: 43,
+        cat: "bph",
+        catName: "BPH & Alt Üriner Sistem",
+        q: "Stres tip üriner inkontinans nedir? Tedavisi, onaylı tek ilaç ve cerrahi seçenekler (TVT, TOT, Yapay Sfinkter)?",
+        a: "• Tanım: Gülme, öksürme, hapşırma veya egzersiz gibi karın içi basıncını artıran durumlarda istemsiz idrar kaçırmadır. %85 hipermobil üretra, %15 intrinsik sfinkter yetmezliğine bağlıdır. Kesin tedavisi CERRAHİDİR.\n• Konservatif: Kilo verme, sigarayı bırakma, pelvik taban kas egzersizleri (Kegel).\n• Medikal: Alfa-adrenerjik agonistler (Epinefrin, norepinefrin), Duloksetin (Stres inkontinansta onaylanmış TEK ilaçtır).\n• Cerrahi Tedaviler:\n  - Retropubik askılar: Marshall-Marchetti-Krantz, Burch kolposüspansiyonu.\n  - Sentetik Midüretral Askılar (Slingler - günümüzde ilk tercih):\n    * TVT (Tension-free Vaginal Tape): Retropubik yerleşimli askı.\n    * TOT (Transobturator Tape): Obturator foramenden geçen askı (içten dışa veya dıştan içe).\n• Erkek Stres İnkontinansı: Genellikle radikal prostatektomi sonrası gelişir; tedavisinde altın standart Yapay Üriner Sfinkter (AMS 800) takılmasıdır."
+      },
+      {
+        id: 44,
+        cat: "bph",
+        catName: "BPH & Alt Üriner Sistem",
+        q: "Ürolojide Botoks (Botulinum toksini) kullanımı nerededir? Hangi hastalıklarda kullanılır?",
+        a: "• Kullanım Amacı: Aşırı kasılan kasların istemsiz ve spazmodik kasılmasını engellemek, nörotransmitter (asetilkolin) salınımını bloke etmek için kullanılır.\n• Kullanıldığı Ürolojik Hastalıklar:\n  1. Urge inkontinans / Aşırı aktif mesane (medikal tedaviye dirençli olgular)\n  2. Nörojenik detrusor aşırı aktivitesi\n  3. İdrar yolu darlıkları (üretral striktürler)\n  4. Kronik pelvik ağrı sendromu\n  5. Üretral sfinkter disfonksiyonu (detrusor-sfinkter dissinerjisi)"
+      },
+
+      // 45-52: İNMEMİŞ TESTİS & BÖBREK TÜMÖRLERİ & RHK
+      {
+        id: 45,
+        cat: "renal_pediatri",
+        catName: "Böbrek & Pediatri & Konjenital",
+        q: "İnmemiş testis nedir? Klinik önemi ve yol açtığı riskler nelerdir?",
+        a: "• Tanım: Normal şartlarda fetal dönemde karın içinde gelişip doğuma kadar skrotuma inmesi gereken testisin skrotum dışında (karın içi veya kasık kanalında) kalması durumudur.\n• Klinik Önemi ve Riskler:\n  - İnfertilite riski artar (sperm üretimi ve olgunlaşması için gereken skrotal optimal düşük sıcaklık sağlanamaz).\n  - Testis kanseri riski belirgin artar (özellikle intraabdominal testislerde seminom riski yüksektir).\n  - Testis gelişimi olumsuz etkilenir ve atrofiye uğrar.\n  - İnguinal herni riski artar (prosesus vajinalis açık kalır).\n  - Torsiyona yatkınlık artar.\n  - Psikososyal sorunlara neden olur."
+      },
+      {
+        id: 46,
+        cat: "renal_pediatri",
+        catName: "Böbrek & Pediatri & Konjenital",
+        q: "Böbrek kisti radyolojik sınıflaması (Bosniak sınıflaması), kategorileri ve yaklaşımları nelerdir?",
+        a: "• Bosniak Sınıflaması: Böbrek kistlerinin malignite riskini belirlemede ve tedaviyi planlamada kullanılır (5 kategori):\n  - Kategori 1: İnce duvarlı, su dansitesinde homojen basit benign kist. Malignite riski %0. Takip gerekmez.\n  - Kategori 2: İnce septalı (<3 cm), kist duvarında ince kalsifikasyon bulunabilen benign kist. Malignite riski %0. Takip gerekmez.\n  - Kategori 2f: Daha fazla ince septa içeren, septada veya duvarda minimal kalınlaşma ve minimal kontrast tutulumu olabilen, tamamen intrarenal >3 cm kontrast tutmayan kistler. Malignite riski: %5 - %10. Periyodik radyolojik takip gerekir.\n  - Kategori 3: Kontrast tutan, kalın düzensiz duvarı veya septası olan kistler. Malignite riski: Yaklaşık %50. Tedavi: Cerrahi eksizyon veya seçilmiş olguda aktif izlem.\n  - Kategori 4: Kontrast tutan yumuşak doku komponentleri (nodül) içeren belirgin kistik lezyonlar. Malignite riski: %95 - %100. Tedavi: Cerrahi rezeksiyon şarttır."
+      },
+      {
+        id: 47,
+        cat: "renal_pediatri",
+        catName: "Böbrek & Pediatri & Konjenital",
+        q: "Benign ve Malign böbrek tümörü tipleri nelerdir (Histolojik)?",
+        a: "• Benign Böbrek Tümörleri: Anjiyomiyolipom (AML), Onkositom, Renal hücreli adenom, Mikst epitelyal-stromal tümör, Leyomiyom, Metanefrik adenom, Kistik nefroma, Basit böbrek kistleri.\n• Malign Böbrek Tümörleri: Renal Hücreli Karsinom (RHK - en sık), Ürotelyal karsinom (toplayıcı sistem), Skuamöz hücreli karsinom, Adenokarsinom, Wilms tümörü (pediatrik nefrobastom).\n• Önemli Kurallar: Radyolojik olarak benign-malign ayrımı kesin yapılamaz. Tek böbrekli olgularda, başka primer malignite şüphesinde, ameliyat riski yüksek olanlarda ve metastatik sistemik tedavi öncesi böbrek kitlesinden perkütan biyopsi alınır. Basit böbrek kistleri asemptomatik ise cerrahiye gerek yoktur."
+      },
+      {
+        id: 48,
+        cat: "renal_pediatri",
+        catName: "Böbrek & Pediatri & Konjenital",
+        q: "Renal hücreli kanser (RHK) alt tipleri, risk faktörleri ve tanı yöntemleri nelerdir?",
+        a: "• Alt Tipleri: 1. Berrak (Açık) hücreli karsinom (%70-80, en sık), 2. Papiller karsinom, 3. Kromofob hücreli karsinom, 4. Toplayıcı tübül karsinomu, 5. Sınıflandırılamayan RHK.\n• Risk Faktörleri: İlerlemiş yaş, erkek cinsiyet, sigara, aile öyküsü, obezite, hipertansiyon, kronik böbrek hastalığı, uzun süreli diyaliz, böbrek kistleri, kimyasallara maruziyet, Von Hippel-Lindau sendromu.\n• Tanı Yöntemleri ve Semptomlar:\n  - Klasik triad: Hematüri, yan ağrısı ve ele gelen abdominal kitle (hastaların çok azında bir arada bulunur).\n  - Paraneoplastik bulgular: Anemi, ateş, hiperkalsemi, eritrositoz, KC fonksiyon bozukluğu (Stauffer sendromu), amiloidoz, trombositoz, kemik ağrısı ve öksürük.\n  - Fizik Muayene: Abdominal kitle, servikal LAP, redükte olmayan varikosel (sol renal ven tıkanıklığı).\n  - Radyoloji: Tanıda en sık kullanılan ve altın standart Kontrastlı Abdominal BT'dir. USG, MR ve böbrek sintigrafisi yardımcıdır."
+      },
+      {
+        id: 49,
+        cat: "renal_pediatri",
+        catName: "Böbrek & Pediatri & Konjenital",
+        q: "RHK'da TNM evrelemesi (T1, T2, T3, T4) nasıldır?",
+        a: "• T1: Tümör &le; 7 cm ve böbreğe sınırlı.\n  - T1a: Tümör &le; 4 cm.\n  - T1b: Tümör 4 - 7 cm arası.\n• T2: Tümör > 7 cm ve böbreğe sınırlı.\n  - T2a: Tümör 7 - 10 cm arası.\n  - T2b: Tümör > 10 cm.\n• T3: Tümör büyük venlere uzanıyor veya perinefrik dokuya yayılıyor; ancak Gerota fasyasını aşmıyor ve ipsilateral adrenal beze geçmiyor.\n  - T3a: Renal vene uzanım veya perinefrik yağ dokusu invazyonu.\n  - T3b: Diyafram altı vena kava inferior tutulumu.\n  - T3c: Diyafram üstü vena kava inferior tutulumu veya kava duvarı invazyonu.\n• T4: Tümör Gerota fasyasının dışına yayılmış veya adrenal beze doğrudan invazedir."
+      },
+      {
+        id: 50,
+        cat: "renal_pediatri",
+        catName: "Böbrek & Pediatri & Konjenital",
+        q: "Evrelere göre RHK tedavisi nasıldır? Lokalize RHK nedir ve nasıl tedavi edilir?",
+        a: "• Lokalize RHK: Böbrek parankimi içinde sınırlı kalan tümörlerdir (T1 ve T2 evreleri).\n• Lokalize Tedavi Seçenekleri:\n  - Radikal Nefrektomi: T1 ve T2'de standart cerrahi.\n  - Parsiyel Nefrektomi: T1a'da altın standart, T1b'de önerilen tedavi.\n  - Ablatif Tedaviler: Kriyoblasyon, radyofrekans ablasyon (RFA), mikrodalga ablasyon, HIFU (ameliyat riski yüksek, yaşlı veya küçük kitleli hastalarda).\n  - Aktif İzlem.\n• Lokal İleri RHK Tedavisi:\n  - Vena kava tutulumu varsa: Radikal nefrektomi + trombektomi.\n  - Lenf nodu tutulumu varsa: Radikal veya parsiyel nefrektomiye ek lenf nodu diseksiyonu.\n  - Adrenal tutulum varsa: Adrenalektomi eklenir.\n• Önemli Kural: RHK kemoterapi ve radyoterapiye oldukça dirençlidir."
+      },
+      {
+        id: 51,
+        cat: "renal_pediatri",
+        catName: "Böbrek & Pediatri & Konjenital",
+        q: "Parsiyel nefrektomi (Nefron koruyucu cerrahi) nedir ve endikasyonları nelerdir?",
+        a: "• Tanım: Temel prensip maksimum fonksiyonel böbrek parankimini geride bırakarak tümörün sağlam cerrahi sınırla tamamen çıkarılmasıdır. Böylece radikal nefrektomi sonrası oluşabilecek kronik böbrek yetmezliğinin yıkıcı etkileri önlenir.\n• Endikasyonlar (Tümörün < 7 cm olması tercih edilir):\n  - Radikal nefrektomi hastayı anefrik bırakacaksa veya diyaliz ihtiyacı doğuracaksa (mutlak endikasyon)\n  - Anatomik veya fonksiyonel tek böbrekli hasta\n  - Bilateral (iki taraflı) böbrek tümörü varlığı\n  - Karşı böbrekte taş, hidronefroz, kronik pyelonefrit, renal arter darlığı veya vezikoüreteral reflü gibi fonksiyon riski yaratan hastalık varlığı\n  - Altta yatan diyabet veya hipertansif nefropati varlığı\n  - T1a kitlelerde standart, T1b kitlelerde önerilen tedavidir."
+      },
+      {
+        id: 52,
+        cat: "renal_pediatri",
+        catName: "Böbrek & Pediatri & Konjenital",
+        q: "Metastatik RHK'da tedavi nedir? Sitoredüktif nefrektomi nedir ve sistemik tedavide hangi ajanlar kullanılır?",
+        a: "• Sitoredüktif Nefrektomi: Metastatik RHK'lı hastalarda performansı iyi, genç ve metastaz yükü az olan olgularda primer tümör yükünü azaltmak ve sistemik tedavinin etkinliğini artırmak amacıyla böbreğin çıkarılmasıdır.\n• Sistemik Tedavi: Metastatik RHK'da konvansiyonel KT ve RT'nin yeri YOKTUR. Hedefe yönelik tirozin kinaz inhibitörleri ve monoklonal antikorlar kullanılır:\n  - Sunitinib\n  - Sorafenib\n  - Bevasizumab (monoklonal antikor)"
+      },
+
+      // 53-65: MESANE KANSERİ (TCC, TUR-M, BCG, KAS İNVAZİF, RADİKAL SİSTEKTOMİ)
+      {
+        id: 53,
+        cat: "mesane_ca",
+        catName: "Mesane Kanseri & Evreleme",
+        q: "Mesane kanseri olan hastaya yaklaşım, istenen testler ve ayırıcı tanı nedir?",
+        a: "• Temel Semptom: Hastaların büyük kısmında en yaygın başvuru semptomu 'ağrısız, intermittan (aralıklı) ve makroskobik hematüri'dir.\n• Yaklaşım: Öncelikle tanı ve evreleme yapılmalıdır. Sonrasında patoloji ve derinliğe göre uygun cerrahi/adjuvan tedavi planlanır.\n• Radyolojik Tetkikler: USG (kitle tanımlama ve hidronefroz tespiti), BT (ekstravezikal ve lenfatik yayılım), MR, Sistoskopi ve TUR-M (tanı ve rezeksiyon).\n• Ayırıcı Tanı: Kronik sistit, mesane taşları, mesanede yabancı cisim, BPH, prostat adenokarsinomu, böbrek adenokarsinomu, üreter tümörleri, mesane endometriozisi."
+      },
+      {
+        id: 54,
+        cat: "mesane_ca",
+        catName: "Mesane Kanseri & Evreleme",
+        q: "Mesane kanseri en sık hangi tip görülür? Risk faktörleri ve semptomları nelerdir?",
+        a: "• Histolojik Tip: En sık Ürotelyal Karsinom (Değişici Epitelyal Karsinom - TCC) görülür. Vakaların yaklaşık %70'i ilk başvuruda yüzeyel (kasa invaze olmayan) mesane kanseridir.\n• Risk Faktörleri:\n  - Eksojen kimyasal karsinojenler (arilaminler, boya/tekstil sanayii)\n  - Sigara (en önemli önlenebilir etken)\n  - Kahve, analjezik kötüye kullanımı (fenasetin)\n  - Mesane Şistozomiyazisi (Schistosoma haematobium - Skuamöz hücreli karsinom riskini artırır)\n  - Pelvik radyasyon öyküsü\n  - Kronik üriner sistem enfeksiyonları, heredite\n• Semptomlar: Ağrısız makroskobik hematüri (ana semptom). İleri evrelerde pollaküri, dizüri, pelvik ağrı, ani sıkışma ve noktüri görülebilir."
+      },
+      {
+        id: 55,
+        cat: "mesane_ca",
+        catName: "Mesane Kanseri & Evreleme",
+        q: "Mesane kanserinde tanı nasıl konur? Sistoskopi ve TUR-M nedir?",
+        a: "• Tanı Basamakları: Anamnez ve fizik muayene (ileri evrede bimanuel palpasyonda kitle hissedilebilir). BPH dışlanması için rektal tuşe yapılır.\n• Laboratuvar: İdrar sitolojisi (yüksek dereceli tümörlerde duyarlıdır). Tümör belirteçleri: BTA Stat, BTA-TRAK, İmmünoSit, NMP22, flow sitometri (DNA ploidisi ölçümü).\n• Görüntüleme ve Tanı: USG, BT, MR. Tanıda ALTIN STANDART Sistoskopidir.\n• TUR-M (Transüretral Mesane Rezeksiyonu): Üretradan sistoskop ile girilerek mesanedeki kitlenin elektrocerrahiyle kesilip çıkarılması işlemidir. Hem kesin patolojik tanı hem de ilk basamak tedavidir."
+      },
+      {
+        id: 56,
+        cat: "mesane_ca",
+        catName: "Mesane Kanseri & Evreleme",
+        q: "Mesane tümörü rezeksiyonu sonrası patolojide nelere dikkat edilir? Düşük vs yüksek derece ne demektir?",
+        a: "• Patolojide Dikkat Edilenler:\n  1. Tümör derecesi (Grade)\n  2. Tümör tipi (histoloji)\n  3. İnvazyon derinliği (Evre - lamina propriaya veya muskularis propriaya geçiş var mı?)\n• Derecelendirme (WHO):\n  - Düşük malignite potansiyelli papiller ürotelyal neoplazm (PUNLMP)\n  - Düşük dereceli papiller ürotelyal karsinom (hücresel anormallikler az, nüks riski var ama progresyon düşük)\n  - Yüksek dereceli papiller ürotelyal karsinom (belirgin hücresel anormallikler, mitoz fazla, kasa invazyon ve metastaz riski çok yüksek)."
+      },
+      {
+        id: 57,
+        cat: "mesane_ca",
+        catName: "Mesane Kanseri & Evreleme",
+        q: "Rezeksiyon sonrası hangi hastalara 4-6 hafta sonra erken sekonder TUR-M yapılmalıdır?",
+        a: "• Sekonder (Re-TUR) TUR-M Endikasyonları (4 - 6 hafta sonra):\n  1. İlk rezeksiyonu komplet (tam) olmayan hastalar\n  2. Patoloji örneğinde detrusor kas dokusu (muskularis propria) İÇERMEYEN olgular\n  3. Tüm T1 tümörler (subepitelyal bağ dokusu invazyonu olanlar)\n  4. Tüm yüksek dereceli tümörler (Ta olsa dahi)\n  5. Kitle boyutu > 3 cm veya multipl yüksek riskli lezyonlar."
+      },
+      {
+        id: 58,
+        cat: "mesane_ca",
+        catName: "Mesane Kanseri & Evreleme",
+        q: "Yüzeyel mesane kanseri nedir? Kas invaziv mesane kanseri nedir? Prognoz farkları?",
+        a: "• Yüzeyel Mesane Kanseri: Ta (mukozayla sınırlı), T1 (submukozaya/lamina propriaya invaze) ve Tis (karsinoma in situ) evrelerini kapsar. Kas dokusuna ulaşmamıştır. Yaşam süreleri daha uzundur. Tedavisi TUR-M ve intravezikal kemoterapi / immünoterapi (BCG) iledir.\n• Kas İnvaziv Mesane Kanseri: T2, T3 ve T4 evreleridir. Tümör mesanenin kalın kas tabakasını (muskularis propria) ve ötesini tutmuştur. Prognozu çok daha kötüdür; primer tedavisi Radikal Sistektomidir."
+      },
+      {
+        id: 59,
+        cat: "mesane_ca",
+        catName: "Mesane Kanseri & Evreleme",
+        q: "Mesane kanserinde TNM evrelemesi nasıldır?",
+        a: "• Primer Tümör (T):\n  - Ta: Non-invaziv papiller karsinom (mukozada sınırlı)\n  - Tis: Karsinoma in situ (düz, yüksek dereceli 'flat' lezyon)\n  - T1: Subepitelyal bağ dokusuna (lamina propria) invaze\n  - T2a: Yüzeyel kas dokusu tutulmuş (muskularis proprianın iç yarısı)\n  - T2b: Derin kas dokusu tutulmuş (muskularis proprianın dış yarısı)\n  - T3a: Perivezikal dokunun mikroskobik tutulumu\n  - T3b: Perivezikal dokunun makroskobik tutulumu (mesane dışı kitle)\n  - T4: Tümör komşu organlara yayılmış (prostat, uterus, vajina, pelvik/abdominal duvar)\n• Lenf Nodu (N):\n  - N0: Lenf nodu metastazı yok\n  - N1: Pelviste tek lenf nodu tutulumu (&le; 2 cm)\n  - N2: Pelviste multipl lenf nodu tutulumu\n  - N3: Ana iliak lenf nodu tutulumu\n• Uzak Metastaz (M):\n  - M0: Uzak metastaz yok | M1: Uzak organ metastazı var"
+      },
+      {
+        id: 60,
+        cat: "mesane_ca",
+        catName: "Mesane Kanseri & Evreleme",
+        q: "Yüzeyel mesane kanserinde tedavi seçenekleri? İntravezikal kemoterapi ve immünoterapi nedir?",
+        a: "• Temel Tedavi: TUR-M'dir. Nüks ve progresyon riskine göre intravezikal kemoterapi veya intravezikal immünoterapi eklenir.\n• İntravezikal Kemoterapi: TUR-M sonrası serbest kalan tümör hücrelerinin implantasyonunu engellemek ve nüksü azaltmak için mesane içine verilir. En sık kullanılan ajanlar: Mitomisin-C, Epirubisin, Doksorubisin ve Pirarubisin.\n• İntravezikal İmmünoterapi (İntravezikal BCG): Canlı zayıflatılmış tüberküloz aşısıdır. Temizlenmiş mesaneye verilir. Yüksek dereceli tümörlerde ve Karsinoma in situ'da progresyonu önleyen temel tedavidir."
+      },
+      {
+        id: 61,
+        cat: "mesane_ca",
+        catName: "Mesane Kanseri & Evreleme",
+        q: "Mesane kanseri risk grupları tablosu ve BCG'nin etki mekanizması nedir?",
+        a: "• Risk Grupları ve Tedavi Önerileri Tablosu:\n  - Düşük Riskli Tümör: TUR-MT sonrası erken tek doz intravezikal kemoterapi.\n  - Orta Riskli Tümör: Nüks riski düşük ve EORTC skoru <5 olanlarda TUR-MT sonrası tek doz kemoterapi; sonrasında 1 yıllık tam doz intravezikal BCG veya optimal intravezikal kemoterapi.\n  - Yüksek Riskli Tümör: 1 - 3 yıl tam doz idame intravezikal BCG veya Radikal Sistektomi.\n  - En Yüksek Riskli Tümör: Radikal Sistektomi. Ameliyat istemeyen veya uygun olmayanlarda 1 - 3 yıl BCG; BCG başarısız olursa Radikal Sistektomi.\n• BCG Etki Mekanizması: BCG, subepitelyal dokuda makrofajları aktive eder, IL-2 salgılanmasını uyarır ve T hücre proliferasyonuna yol açar. Bu immün yanıt sayesinde kalan mikroskobik tümör hücreleri yok edilir."
+      },
+      {
+        id: 62,
+        cat: "mesane_ca",
+        catName: "Mesane Kanseri & Evreleme",
+        q: "Epirubisin ve Mitomisin nedir? Hangi hastalara verilir?",
+        a: "• Tanım: İntravezikal kemoterapide en sık kullanılan kemoterapötik ajanlardır.\n• Kullanım Alanı: Yüzeyel mesane kanserlerinde TUR-M sonrası tümör hücre implantasyonunu önlemek ve nüks riskini azaltmak amacıyla ilk 6 - 24 saat içinde tek doz veya adjuvan kürler halinde mesane içerisine uygulanır."
+      },
+      {
+        id: 63,
+        cat: "mesane_ca",
+        catName: "Mesane Kanseri & Evreleme",
+        q: "Mesane kanserinde Karsinoma in situ (CIS) nedir, klinik önemi ve tedavisi nasıldır?",
+        a: "• Tanım: Yüzeyel mesane kanseri sınıflamasında yer alan (Tis), lümene doğru büyüme göstermeyen, düz ('flat') yüksek dereceli malign epitelyal lezyondur.\n• Klinik Önemi: Çok agresiftir, yüksek hücresel atipi gösterir ve kasa invazyon riski son derece yüksektir (prekanseröz / yüksek dereceli malignite).\n• Tedavisi: TUR-M sonrasında mesaneye intravezikal BCG immünoterapisi verilir. İntravezikal tedavi sonrası kontrol biyopsisinde CIS sebat ederse veya nüks ederse gecikmeden Radikal Sistektomi yapılır."
+      },
+      {
+        id: 64,
+        cat: "mesane_ca",
+        catName: "Mesane Kanseri & Evreleme",
+        q: "Kas-invaziv mesane kanseri nedir? Ameliyatı ve alternatif multimodal koruyucu protokol nedir?",
+        a: "• Tanım: Tümörün mesane kas tabakasına (muskularis propria) invaze olduğu (T2-T4) tablodur.\n• Standart Ameliyat: Radikal Sistektomi + Pelvik Lenf Nodu Diseksiyonudur. Erkekte mesane, prostat, seminal veziküller ve pelvik lenfler; kadında mesane, üretra, uterus, overler ve vajen ön duvarı total olarak çıkarılır. Üriner diversiyon (ileal konduit / ürostomi veya neobladder) yapılır.\n• Sağkalım Katkısı: Neoadjuvan sisplatin bazlı kemoterapi sonrası radikal sistektomi yapılması sağkalımı belirgin artırır.\n• Alternatif (Mesane Koruyucu Multimodal Tedavi): Ameliyat olamayan veya istemeyen T2N0M0 seçilmiş hastalarda TUR-M + Radyoterapi (RT) ile lokal kontrol, eş zamanlı Kemoterapi (KT) ile mikrometastazların kontrolü amaçlanır."
+      },
+      {
+        id: 65,
+        cat: "mesane_ca",
+        catName: "Mesane Kanseri & Evreleme",
+        q: "Metastatik mesane kanseri tedavisi ve Palyatif Sistektomi nedir?",
+        a: "• Primer Tedavi: Sisplatin bazlı kombine kemoterapidir (MVAC veya Gemsitabin+Sisplatin). İkinci basamakta Vinflunin veya İmmünoterapi (Atezolizumab, Pembrolizumab) kullanılır. Kemik metastazı varsa bisfosfonat tedavisi eklenir.\n• Palyatif Sistektomi: Küratif (iyileştirici) amaç taşımayan, ancak kontrol altına alınamayan şiddetli hematüriyi, dayanılmaz pelvik ağrıyı ve üriner fistülleri yönetmek için mesanenin cerrahi olarak çıkarılmasıdır. Hastanın semptomlarını hafifletmek ve yaşam kalitesini artırmak amaçlanır; operasyonla birlikte RT ve KT uygulanabilir."
+      },
+
+      // 66-74: TESTİS TÜMÖRLERİ & BEP & RPLND
+      {
+        id: 66,
+        cat: "renal_pediatri",
+        catName: "Böbrek & Pediatri & Konjenital",
+        q: "Testis tümörü alt tipleri ve germ hücreli tümörler nelerdir?",
+        a: "• Germ Hücreli Tümörler (%95):\n  - İntratübüler Germ Hücre Neoplazisi (TIN / CIS)\n  - Klasik Seminom (En sık görülen tip)\n  - Embriyonel Karsinom\n  - Yolk Sac (Endodermal Sinüs) Tümörü\n  - Koryokarsinom\n  - Teratom (Matur, immatur)\n• Non-Germ Hücreli (Gonadal Stromal) Tümörler:\n  - Leydig hücreli tümör\n  - Sertoli hücreli tümör\n  - Granüloza hücreli tümör, Gonadoblastom\n• Diğerleri: Karsinoid tümör, Nefroblastom, Paragangliom, Metastatik tümörler (lenfoma vb.)."
+      },
+      {
+        id: 67,
+        cat: "renal_pediatri",
+        catName: "Böbrek & Pediatri & Konjenital",
+        q: "Seminom ve Non-seminom testis tümörü sınıflaması nasıldır?",
+        a: "• Seminom Grubu:\n  - Klasik Seminom\n  - Anaplastik Seminom\n  - Spermatositik Seminom\n• Non-Seminom Grubu:\n  - Embriyonel Karsinoma\n  - Koryokarsinoma\n  - Teratom\n  - Yolk Sac (Vitellüs kesesi) Tümörü"
+      },
+      {
+        id: 68,
+        cat: "renal_pediatri",
+        catName: "Böbrek & Pediatri & Konjenital",
+        q: "Testis kanseri risk faktörleri ve semptomları nelerdir?",
+        a: "• Risk Faktörleri:\n  - İnmemiş testis (Kriptorşidizm - en önemli risk faktörü)\n  - Aile öyküsü (birinci derece akrabada testis CA)\n  - Karşı testiste germ hücreli tümör öyküsü\n  - Atrofik testis\n  - İnfertilite\n• Semptomlar:\n  - Ağrısız, skrotumda ele gelen sert kitle (klasik başvuru; orşit eşlik ederse ağrılı olabilir)\n  - Skrotumda ağırlık ve dolgunluk hissi\n  - Halsizlik, kilo kaybı\n  - Bel ve sırt ağrısı (retroperitoneal lenf nodu metastazı)\n  - Bulantı-kusma, dispne, sürekli öksürük (akciğer metastazı), kemik ağrıları."
+      },
+      {
+        id: 69,
+        cat: "renal_pediatri",
+        catName: "Böbrek & Pediatri & Konjenital",
+        q: "Testis tümöründe istenecek tetkikler ve serum tümör belirteçleri (AFP, hCG, LDH) nelerdir?",
+        a: "• Tetkikler: Skrotal Renkli Doppler USG (tanıda ilk; kitle boyutu, solid-kistik ayrımı), Akciğer grafisi, Toraks/Batın BT, MR, PET (evrelemede).\n• Serum Tümör Belirteçleri:\n  1. AFP (Alfa-fetoprotein): Yarılanma ömrü 4 - 6 gündür. Yolk sac tümörü ve embriyonel karsinomda yükselir. Saf seminomda ASLA yükselmez!\n  2. hCG (İnsan Koryonik Gonadotropini): Yarılanma ömrü 24 - 36 saattir (notta: 24-48 saat). Koryokarsinomda belirgin, embriyonel karsinom ve yolk sac'ta yükselir; saf seminomların %10-15'inde sinsityotrofoblastik hücrelerden hafif yükselebilir.\n  3. LDH (Laktat Dehidrogenaz): Yüksekliği tümör volümü ve yükü ile orantılıdır; prognoz tayininde kullanılır."
+      },
+      {
+        id: 70,
+        cat: "renal_pediatri",
+        catName: "Böbrek & Pediatri & Konjenital",
+        q: "Testis tümörü ayırıcı tanısında hangi hastalıklar düşünülmelidir?",
+        a: "• Ayırıcı Tanı:\n  - Epididimit\n  - Orşit\n  - Hidrosel\n  - İnguinal herni (kasık fıtığı)\n  - Testis torsiyonu\n  - Spermatosel\n  - Hematosel"
+      },
+      {
+        id: 71,
+        cat: "renal_pediatri",
+        catName: "Böbrek & Pediatri & Konjenital",
+        q: "Testis tümörü tedavisinde ilk basamak nedir ve İnguinal Orşiektomi nedir?",
+        a: "• İlk Basamak Tedavi: Şüpheli testiküler kitlelerde ilk basamak tanısal ve küratif tedavi Radikal İnguinal Orşiektomidir.\n• Tanım: Testis tümörünün skrotal insizyonla açılması tümör yayılımına yol açacağından KONTRENDİKASYONDUR. Cerrahi mutlaka inguinal kanaldan (kasıktan) girilerek spermatik kord derin internal halka seviyesinde klemplenip testisin tümörle birlikte tamamen çıkarılması işlemidir."
+      },
+      {
+        id: 72,
+        cat: "renal_pediatri",
+        catName: "Böbrek & Pediatri & Konjenital",
+        q: "Orşiektomi sonrası Evre 1 hastalıkta tek doz KT önerilen hastaların özellikleri nelerdir?",
+        a: "• Seminomda Yüksek Nüks Kriterleri (Adjuvan tek doz Karboplatin önerilir):\n  - Tümör boyutunun > 4 cm olması\n  - Rete testise yayılım / invazyon varlığı\n• Non-Seminomda Yüksek Nüks Kriterleri (Adjuvan tek kür BEP önerilir):\n  - Tümör içi veya peritümöral vasküler / lenfatik invazyon varlığı (en önemli faktör)\n  - Proliferasyon oranının > %70 olması\n  - Embriyonel kanser oranının > %50 olması\n  - Yolk sac komponentinin BULUNMAMASI"
+      },
+      {
+        id: 73,
+        cat: "renal_pediatri",
+        catName: "Böbrek & Pediatri & Konjenital",
+        q: "İleri evre testis kanserinde tedavi algoritması nasıldır (BEP, RPLND, VİB)?",
+        a: "• İleri Evre Tedavi Protokolü (Evre 2b - 3):\n  1. Önce standart BEP kemoterapisi verilir.\n  2. Yanıt tam ise izleme alınır.\n  3. Yanıt tam alınamazsa (rezidüel kitle kalırsa): Retroperitoneal Lenf Nodu Diseksiyonu (RPLND) yapılır.\n  4. RPLND patolojisinde Teratom veya fibrozis çıkarsa izlem ile devam edilir.\n  5. Patolojide canlı kanser hücresi saptanırsa kurtarma tedavisi olarak VİB (Vinblastin/Vinkristin + İfosfamid + Sisplatin) kemoterapisi uygulanır."
+      },
+      {
+        id: 74,
+        cat: "renal_pediatri",
+        catName: "Böbrek & Pediatri & Konjenital",
+        q: "Retroperitoneal lenf nodu diseksiyonu (RPLND) nedir? BEP kemoterapisi nedir?",
+        a: "• BEP Kemoterapisi: İleri evre testis tümörlerinde uygulanan altın standart kombine rejimdir. Bileşenleri:\n  - B: Bleomisin\n  - E: Etopozid\n  - P: Sisplatin (Platin)\n• RPLND: Testisin primer lenfatik drenaj yolu retroperitoneal bölgedir (karın içinde omurganın ve büyük damarların önü/arkası). Metastatik yayılımı temizlemek veya rezidüel kitleyi çıkarmak amacıyla bu bölgedeki lenf nodlarının cerrahi olarak disseke edilmesidir."
+      },
+
+      // 75-89: PROSTAT KANSERİ (PSA, PİRADS, GLEASON, D'AMİCO, ADT, LHRH, KDPK)
+      {
+        id: 75,
+        cat: "prostat_ca",
+        catName: "Prostat Kanseri",
+        q: "Prostat kanseri nedir, kimlerde görülür ve tanısında neler istenir?",
+        a: "• Tanım: Üretrayı çevreleyen prostat bezinin malign tümörüdür. Ezici çoğunluğu (%95) Adenokarsinomdur. Nadiren sarkom, nöroendokrin tümör ve küçük hücreli karsinom görülebilir. Prostat kanseri en sık Periferal Zondan gelişir.\n• Kimlerde Görülür: 50 yaş üzeri erkekler, ailesinde prostat CA öyküsü olanlar, Afro-Amerikalı ırk, kötü beslenenler, alkol ve sigara kullananlar.\n• Tanıda İstenenler:\n  - Parmakla Rektal Muayene (DRE): 'Tahta sertliğinde' nodüler prostat palpe edilir.\n  - PSA (Prostat Spesifik Antijen) ve PSA kinetiği\n  - Multiparametrik Prostat MR (mpMR): Tümörün konumunu ve agresifliğini gösterir.\n  - Transrektal veya transperineal Prostat Biyopsisi (kesin patolojik tanı)."
+      },
+      {
+        id: 76,
+        cat: "prostat_ca",
+        catName: "Prostat Kanseri",
+        q: "Prostat kanseri risk faktörleri ve en sık görülen patolojisi nedir?",
+        a: "• Risk Faktörleri: Aile öyküsünde prostat CA bulunması (genetik yatkınlık), ileri yaş, kötü/yağlı beslenme, sigara, alkol, enfeksiyonlar, kimyasal karsinojenler, D vitamini düşüklüğü, hormonal etkiler (Androjenler ve östrojen dengesi).\n• En Sık Görülen Patoloji: Asiner Adenokarsinomdur."
+      },
+      {
+        id: 77,
+        cat: "prostat_ca",
+        catName: "Prostat Kanseri",
+        q: "Prostat kanseri tanısı nasıl konur? PSA ve rektal tuşenin önemi nedir?",
+        a: "• Tanı Yöntemi: Rektal muayenede tahta sertliğinde asimetrik prostat tespiti ve/veya serum PSA yüksekliği biyopsi endikasyonu koydurur. Tanı TRUS (transrektal USG) veya MR-füzyon eşliğinde prostat iğne biyopsisi ile kesinleştirilir.\n• PSA Önemi: Prostat bezinde üretilen organa özgü bir proteindir. Prostat kanseri, BPH, kronik prostatit, prostat tüberkülozu ve enstrümantasyonda yükselir.\n• Rektal Tuşe Önemi: PSA normal olsa dahi tümörlerin %15-20'si yalnızca rektal tuşedeki sertlik ile yakalanabilir."
+      },
+      {
+        id: 78,
+        cat: "prostat_ca",
+        catName: "Prostat Kanseri",
+        q: "Multiparametrik Prostat MR'ın önemi ve PIRADS sınıflaması (1-5) nedir?",
+        a: "• mpMR Önemi: Yüksek çözünürlük ile prostat anatomisini, kaspül dışı yayılımı, lezyonun yerini ve agresifliğini detaylı gösterir; hedefe yönelik biyopsi imkanı sunar.\n• PIRADS Sınıflaması (Prostate Imaging Reporting and Data System):\n  - PIRADS 1: Klinik anlamlı kanser riski çok düşüktür (benign).\n  - PIRADS 2: Klinik anlamlı kanser riski düşüktür (benign).\n  - PIRADS 3: Belirsiz / şüpheli lezyon.\n  - PIRADS 4: Klinik anlamlı kanser olasılığı yüksektir.\n  - PIRADS 5: Klinik anlamlı kanser olasılığı çok yüksektir."
+      },
+      {
+        id: 79,
+        cat: "prostat_ca",
+        catName: "Prostat Kanseri",
+        q: "Gleason skorlama sistemi nedir, nasıl hesaplanır ve dereceleri nelerdir?",
+        a: "• Tanım: Prostat adenokarsinomunun histopatolojik derecelendirme sistemidir. Biyopsideki agresifliği belirlemede ve tedaviyi seçmede en kritik parametredir.\n• Hesaplama: Biyopsi materyalinde en sık görülen (primer) ve ikinci en sık görülen (sekonder) hücre paternleri 1 ile 5 arasında puanlanır ve toplanır (Örn: 3 + 4 = 7).\n• Derecelendirme:\n  - Gleason &le; 6: Düşük dereceli tümör (İyi diferansiye)\n  - Gleason 7 (3+4 veya 4+3): Orta dereceli tümör\n  - Gleason 8 - 10: Yüksek dereceli tümör (Kötü diferansiye / agresif)."
+      },
+      {
+        id: 80,
+        cat: "prostat_ca",
+        catName: "Prostat Kanseri",
+        q: "Prostat kanseri tanısı almış hastanın uzak metastaz taramasında hangi testler istenir?",
+        a: "• İstenen Testler:\n  - Öncelikle Toraks/Abdomen/Pelvis BT ve Tüm Vücut Kemik Sintigrafisi istenir.\n  - Şüpheli durumlarda ve yüksek riskli hastalarda: Ga-68 PSMA PET-BT çekilir."
+      },
+      {
+        id: 81,
+        cat: "prostat_ca",
+        catName: "Prostat Kanseri",
+        q: "Prostat kanseri TNM evrelemesi ve D'Amico risk sınıflaması nasıldır?",
+        a: "• TNM Klinik Evreleme:\n  - T1: Klinik olarak palpe edilemeyen, görüntülenemeyen tümör (T1a: rezeksiyonun &le;%5'i, T1b: rezeksiyonun >%5'i, T1c: PSA yüksekliği nedeniyle yapılan iğne biyopsisinde saptanan).\n  - T2: Organa sınırlı tümör (T2a: bir lobun yarısından azı, T2b: bir lobun yarısından fazlası, T2c: her iki lob tutulu).\n  - T3: Prostat kapsülü dışına çıkmış (T3a: ekstrakapsüler yayılım, T3b: seminal vezikül invazyonu).\n  - T4: Komşu organlara fikse veya yayılmış (mesane boynu, rektum, sfinkter, levator kası).\n  - N0/N1: Bölgesel lenf nodu tutulumu yok / var.\n  - M0/M1: Uzak metastaz yok / var.\n• D'Amico Risk Sınıflaması:\n  - Düşük Risk: PSA < 10 ng/mL VE Gleason &le; 6 VE Evre T1c - T2a\n  - Orta Risk: PSA 10 - 20 ng/mL VEYA Gleason = 7 VEYA Evre T2b\n  - Yüksek Risk: PSA > 20 ng/mL VEYA Gleason 8 - 10 VEYA Evre &ge; T2c\n  - Lokal İleri: Evre T3 - T4 tümörler."
+      },
+      {
+        id: 82,
+        cat: "prostat_ca",
+        catName: "Prostat Kanseri",
+        q: "Lokalize prostat kanseri nedir ve tedavi seçenekleri nelerdir?",
+        a: "• Tanım: Prostat kapsülünü aşmamış, organa sınırlı (Evre T1 ve T2) prostat kanseridir.\n• Tedavi Seçenekleri:\n  1. Radikal Prostatektomi (Cerrahi eksizyon)\n  2. Radyoterapi (RT: Eksternal RT veya Brakiterapi)\n  3. Aktif Gözlem / Aktif İzlem (Düşük riskli seçilmiş olgularda)."
+      },
+      {
+        id: 83,
+        cat: "prostat_ca",
+        catName: "Prostat Kanseri",
+        q: "Lokal ileri prostat kanseri nedir ve tedavi seçenekleri nelerdir?",
+        a: "• Tanım: Kanser prostat kapsülünü aşarak çevre dokulara ve seminal veziküllere ulaşmıştır (Evre T3 ve T4); PSA sıklıkla >20 ng/mL'dir.\n• Tedavi Seçenekleri: Radyoterapi (RT) + Uzun süreli Hormonoterapi (Androjen Deprivasyon Tedavisi - ADT) kombinasyonu temeldir. Hormonoterapi cerrahi (bilateral orşiektomi) veya tıbbi olarak LHRH agonist/antagonistleri ve antiandrojenlerle yapılır. Hormonoterapiye direnç gelişirse sistemik Kemoterapi eklenir."
+      },
+      {
+        id: 84,
+        cat: "prostat_ca",
+        catName: "Prostat Kanseri",
+        q: "Prostat kanserinde Aktif İzlem nedir ve hangi hastalar uygundur?",
+        a: "• Tanım: Küratif primer tedavinin, kanserin biyokimyasal veya histolojik progresyonunu gösteren belirtiler ortaya çıkana kadar ertelenmesidir.\n• Uygun Hasta Kriterleri:\n  - Düşük riskli tümörler\n  - PSA &le; 10 ng/mL\n  - Gleason skoru &le; 6\n  - Klinik evre T1c veya T2a\n• İzlem Protokolü: Hasta her 3 - 6 ayda bir rektal muayene ve PSA testi ile, her 1 - 2 yılda bir kontrol prostat biyopsisi ile takip edilir."
+      },
+      {
+        id: 85,
+        cat: "prostat_ca",
+        catName: "Prostat Kanseri",
+        q: "Radikal prostatektomi ameliyatı nedir ve komplikasyonları nelerdir?",
+        a: "• Tanım: Üretra ile mesane arasındaki tüm prostat dokusunun seminal veziküllerle birlikte negatif cerrahi sınır elde edilecek şekilde total çıkarılmasıdır. 10 yıl ve üzeri yaşam beklentisi olan lokalize kanserli hastalara uygulanır. Onkolojik eradikasyon temel amaçtır; kontinans ve potens korunmaya çalışılır.\n• Komplikasyonları:\n  1. Üriner İnkontinans (idrar kaçırma)\n  2. Erektil Disfonksiyon (empotans)\n  3. Üriner retansiyon\n  4. Cerrahi alan enfeksiyonları\n  5. Kanama (hematom)\n  6. Vezikoüretral anastomoz darlığı\n  7. Damar, sinir ve çevre rektum hasarı."
+      },
+      {
+        id: 86,
+        cat: "prostat_ca",
+        catName: "Prostat Kanseri",
+        q: "Metastatik prostat kanseri tedavisi nasıl olmalıdır ve kullanılan ajanlar nelerdir?",
+        a: "• Temel Tedavi: Hormonal tedavi yani Androjen Deprivasyon Tedavisidir (ADT). Amaç testosteron üretimini kastrasyon düzeyine (<50 ng/dL) düşürmektir.\n• Tedavi Yöntemleri ve Ajanlar:\n  1. Cerrahi Kastrasyon: Bilateral orşiektomi (en hızlı ve ucuz yöntem).\n  2. Medikal Kastrasyon:\n     - Östrojenler: Dietilstilbestrol (DES) ile testosteron baskılanır.\n     - LHRH Agonistleri: Goserelin, Löprolid, Triptorelin, Histrelin, Buserelin.\n     - LHRH Antagonistleri: Abarelix, Degarelix (doğrudan reseptör blokajı, testosteron ve FSH'yı hızla düşürür, flare yapmaz).\n     - Antiandrojenler:\n       * Steroidal: Siproteron asetat, Megestrol asetat, Medroksiprogesteron asetat.\n       * Non-steroidal: Flutamid, Nilutamid, Bikalutamid."
+      },
+      {
+        id: 87,
+        cat: "prostat_ca",
+        catName: "Prostat Kanseri",
+        q: "Cerrahi kastrasyon ve Medikal kastrasyon nedir, farkları nelerdir?",
+        a: "• Cerrahi Kastrasyon: Bilateral subkapsüler orşiektomi ile skrotum içindeki testosteron üreten leydig hücrelerinin bulunduğu organların cerrahi olarak çıkarılmasıdır. Hızlı yanıt veren (<12 saat), ucuz ve altın standart bir yöntemdir. Geri dönüşümsüzdür, psikolojik etkileri vardır ve aralıklı ADT uygulanamaz.\n• Medikal Kastrasyon: LHRH agonistleri, LHRH antagonistleri veya antiandrojenler gibi farmakolojik ilaçlarla testosteron üretiminin ilaç baskısıyla kastrasyon seviyesine indirilmesidir. Geri dönüşümlüdür ve aralıklı tedaviye olanak sağlar."
+      },
+      {
+        id: 88,
+        cat: "prostat_ca",
+        catName: "Prostat Kanseri",
+        q: "LHRH agonistleri nelerdir ve etki mekanizmaları nasıldır (Flare etkisi ve Down-regülasyon)?",
+        a: "• Moleküller: Goserelin, Löprolid, Triptorelin, Histrelin ve Buserelin.\n• Etki Mekanizması:\n  - Bu moleküller hipofizdeki GnRH reseptörlerine bağlanır.\n  - İlk 7 gün içerisinde LH ve FSH salınımını belirgin artırırlar (bu duruma 'Tümör Flare Etkisi' denir ve kemik ağrısı, retansiyon yapabilir; önlemek için öncesinde antiandrojen verilir).\n  - 7 günden sonra GnRH reseptörleri 'down-regüle' (duyarsızlaşma) olur ve LH/FSH salınımı tamamen baskılanır.\n  - Bunun sonucunda Leydig hücrelerinde testosteron üretimi durur ve 3 - 4 hafta içerisinde serum testosteronu kastrasyon seviyesine (<50 ng/dL) düşer."
+      },
+      {
+        id: 89,
+        cat: "prostat_ca",
+        catName: "Prostat Kanseri",
+        q: "Kastrasyona dirençli prostat kanseri (KDPK) ne demektir ve tedavi seçenekleri nelerdir?",
+        a: "• Tanım: Uygun ADT tedavisi ile serum total testosteron kastrasyon düzeyine (<50 ng/dL) düşürülmüş olmasına rağmen hastalığın klinik/radyolojik ilerlemesi ve ardışık PSA artışının görülmesidir.\n• Tedavi Seçenekleri:\n  - Kemoterapi: Dosetaksel (Docetaxel) ve Kabazitaksel (Cabazitaxel)\n  - Yeni Nesil Hormon Ajanları: Abirateron (androjen sentez inhibitörü) ve Enzalutamid (androjen reseptör blokeri)\n  - Radyofarmasötik / Radyoterapi: Radyum-223 (kemik metastazlarında)\n  - İmmünoterapi: Pembrolizumab"
+      },
+
+      // 90-96: POLİKİSTİK BÖBREK & ANOMALİLER & RENAL KOLİK & ÜST ÜRİNER SİSTEM TÜMÖRLERİ
+      {
+        id: 90,
+        cat: "renal_pediatri",
+        catName: "Böbrek & Pediatri & Konjenital",
+        q: "Polikistik böbrek hastalığı (PKBH) nedir? Tipleri ve klinik özellikleri nelerdir?",
+        a: "• Tanım: Genetik geçişli, böbrek parankiminde çok sayıda kist gelişimi ile karakterize ilerleyici bir hastalıktır.\n• Tipleri:\n  1. Otozomal Resesif PKBH (ARPKBH - İnfantil Tip): Subkapsüler çok sayıda kortikomedüller kist bulunur. Karaciğerde periportal fibrozis, safra kanalı proliferasyonu ve dilatasyonu eşlik eder. 4 alt tipi vardır:\n     - Perinatal: Böbrekler çok büyüktür; ilk günlerde akciğer hipoplazisi ve böbrek yetmezliğinden kaybedilir.\n     - Neonatal: İlerleyen dönemde böbrek yetmezliği gelişir.\n     - İnfantil: Hipertansiyon, hematüri ve idrar konsantrasyon bozukluğu ön plandadır.\n     - Jüvenil: Erişkin yaşlara kadar yaşayabilir; konjenital hepatik fibrozis eşlik eder, medüller toplayıcı kanallar geniştir.\n  2. Otozomal Dominant PKBH (ADPKBH - Erişkin Tip): Erişkin yaşta ortaya çıkan, bilateral diffüz büyük böbrek kistleri ile giden tiptir. Yan ağrısı, hipertansiyon, hematüri, pyelonefrit, nefrokalsinozis ve ilerleyici KBY görülür. İntrakraniyal anevrizma ve karaciğer kistleri eşlik edebilir. Aile öyküsü çok önemlidir."
+      },
+      {
+        id: 91,
+        cat: "renal_pediatri",
+        catName: "Böbrek & Pediatri & Konjenital",
+        q: "Atnalı böbrek nedir ve klinik önemi nedir?",
+        a: "• Tanım: Gestasyonun erken döneminde, böbrekler pelviste birbirine yakınken nefrojenik hücrelerin anormal migrasyonu sonucunda böbreklerin genellikle alt pollerinin füzyonu (birleşmesi) ile oluşan en sık füzyon anomalisidir.\n• Klinik Önemi: Atnalı böbrekli çocuklarda ölüme yol açabilecek diğer konjenital malformasyonlar daha sık görülür.\n• Semptom ve Bulgular: %30 - %40'ı asemptomatiktir; şikayetler ileri yaşta çıkar. Ürolitiazis (taş), üreteropelvik darlığa bağlı hidronefroz, vezikoüreteral reflü, hipertansiyon, üriner enfeksiyonlar, hematüri, karın ağrısı ve karında kitle. Eşlik eden durumlar: Hipospadias, inmemiş testis ve duplike toplayıcı sistem.\n• Ameliyat Endikasyonu: Atnalı böbreğin en sık cerrahi endikasyonu Üreteropelvik (UP) darlıktır."
+      },
+      {
+        id: 92,
+        cat: "renal_pediatri",
+        catName: "Böbrek & Pediatri & Konjenital",
+        q: "Üreteropelvik (UP) darlık nedir? Klinik önemi ve tedavisi nasıldır?",
+        a: "• Tanım: Üreterin renal pelvis ile birleştiği bölgedeki darlığı ve fonksiyonel tıkanıklığı ifade eder.\n• Klinik Önemi: İdrar drenajını engeller; hidronefroz, yan ağrısı, tekrarlayan İYE, hematüri, böbrek fonksiyon kaybı ve taş oluşumuna eğilimi artırır.\n• Tedavi Seçenekleri:\n  - Gözlem ve ultrasonografik/sintigrafik takip (hafif, asemptomatik olgularda)\n  - İlaç tedavisi (İYE ve ağrıya yönelik)\n  - Üreter stent (Double-J stent) yerleştirilmesi\n  - Cerrahi (Altın standart): Piyeloplasti ameliyatı (üreteropelvik bileşke darlığının rezeke edilip yeniden anastomoz yapılması)."
+      },
+      {
+        id: 93,
+        cat: "renal_pediatri",
+        catName: "Böbrek & Pediatri & Konjenital",
+        q: "Hipospadias ve epispadias nedir? Klinik önemleri nelerdir?",
+        a: "• Hipospadias: Penisin embriyolojik gelişimi sırasındaki üretral katlantıların kapanma anomalisi nedeniyle eksternal meatüsün normal anatomik pozisyonunda olmayıp glansın altında, penis gövdesinde, penoskrotal bileşkede, skrotumda veya perineum üzerinde açılması durumudur.\n• Epispadias: Eksternal meatüsün penisin dorsal (üst) yüzeyinde bir noktaya açılması durumudur. Genellikle mesane ekstrofisi kompleksi ile birliktedir. İdrar akım yönü bozukluğu, kordi (penil eğrilik) ve ileride cinsel fonksiyon bozukluğuna yol açacağından cerrahi rekonstrüksiyon şarttır."
+      },
+      {
+        id: 94,
+        cat: "aciller",
+        catName: "Ürolojik Aciller & Travma",
+        q: "Renal kolik olan hastaya yaklaşım ve acil müdahale algoritması nasıldır?",
+        a: "• Tanım: Genellikle taş obstrüksiyonu sonrası toplayıcı sistemin gerilmesiyle ortaya çıkan çok şiddetli, ani başlangıçlı kıvrandırıcı lomber ağrıdır.\n• Yaklaşım Protokolü:\n  1. İlk ve acil adım ağrı kontrolünün sağlanmasıdır (NSAİİ ve opioidler).\n  2. Bulantı-kusma eşlik ediyorsa intravenöz antiemetik ilaç verilir.\n  3. Ateş varsa pyelonefrit / ürosepsis ayrımı yapılmalı, idrar kültürü ve kan tahlili bakılmalıdır.\n  4. Tanıda altın standart Kontrastsız Spiral BT çekilmesidir.\n  5. Farmakolojik tedavi ile rahatlamayan dirençli ağrıda, obstrüksiyonu gidermek için acil girişim yapılır.\n  - İlk girişimsel seçenek: Double-J (JJ) Stent yerleştirilmesi.\n  - İkinci girişimsel seçenek (stent geçilemezse): Perkütan Nefrostomi tüpü takılmasıdır."
+      },
+      {
+        id: 95,
+        cat: "mesane_ca",
+        catName: "Mesane Kanseri & Evreleme",
+        q: "Üst üriner sistem tümörü nedir ve özellikleri nelerdir?",
+        a: "• Tanım: Renal pelvikaliksiyel sistemi ve üreteri döşeyen ürotelyumdan kaynaklanan kanserlerdir (Üst Üriner Sistem Ürotelyal Karsinomu - ÜÜS-ÜK).\n• Lokalizasyon Özelliği: Pelvikaliksiyel yerleşimli tümörler, üreter tümörlerine göre çok daha sıktır.\n• Patoloji Özelliği: Mesane tümörlerine kıyasla tanı anında çok daha yüksek oranda invaziv patolojiye sahiptirler."
+      },
+      {
+        id: 96,
+        cat: "mesane_ca",
+        catName: "Mesane Kanseri & Evreleme",
+        q: "Üst üriner sistem tümörleri hangi hastalıklarla ilişkilidir? Tanısı ve tedavisi nasıldır?",
+        a: "• İlişkili Hastalıklar ve Riskler: Mesane kanseri öyküsü (mesane kanserli hastaların üst üriner sistemleri risk altındadır), sigara içimi (en önemli risk), kronik enfeksiyonlar ve ürolitiyazis (taş hastalığı).\n• Tanı:\n  - Semptomlar: Hematüri (en sık), yan ağrısı, lomber kitle; metastatik olgularda kilo kaybı, halsizlik, anoreksi, öksürük.\n  - Radyoloji: Kontrastlı BT Ürografi ve MR Ürografi.\n  - İleri Tanı: Sistoskopi (eş zamanlı mesane tümörünü dışlamak için), idrar sitolojisi ve Diagnostik Üreterorenoskopi (URS) ile biyopsi.\n• Tedavi:\n  - Düşük riskli grupta ilk seçenek: Böbrek koruyucu cerrahidir (URS + Lazer ablasyon, perkütan tümör rezeksiyonu veya segmental üreter rezeksiyonu). Adjuvan topikal ajanlar (BCG veya Mitomisin-C) verilebilir.\n  - Yüksek riskli / İnvaziv tümörlerde standart cerrahi: Radikal Nefroüreterektomi + Mesane Cuff (Kaf) Eksizyonudur."
+      }
+    ];
+
+    /* Kategori Meta Verileri */
+    const CATEGORIES = {
+      tas: { title: "Taş Hastalıkları", color: "sky", icon: "disc" },
+      bph: { title: "BPH & Alt Üriner Sistem", color: "blue", icon: "activity" },
+      androloji: { title: "Androloji & İnfertilite", color: "violet", icon: "heart-pulse" },
+      aciller: { title: "Ürolojik Aciller & Travma", color: "rose", icon: "alert-triangle" },
+      enfeksiyon: { title: "İYE & CYBH & Hematüri", color: "amber", icon: "shield" },
+      mesane_ca: { title: "Mesane & Üretel Karsinom", color: "orange", icon: "crosshair" },
+      prostat_ca: { title: "Prostat Kanseri", color: "indigo", icon: "target" },
+      renal_pediatri: { title: "Böbrek, Testis & Konjenital", color: "emerald", icon: "dna" }
+    };
+
+    /* Uygulama Bellek Durumu (Tek oturum in-memory) */
+    let appState = {
+      currentTab: 'library',
+      leitnerBoxes: {}, // id -> 1 (tekrar), 2 (zor), 3 (öğrenildi)
+      allAnswersHidden: false,
+      flashcardIndex: 0,
+      flashcardBoxFilter: 'ALL',
+      filteredFlashcards: [...UROLOGY_DATA],
+      quizIndex: 0,
+      quizScore: 0,
+      quizQuestions: [],
+      feynmanActiveId: 88 // Örnek varsayılan: LHRH agonistleri mekanizması
+    };
+
+    const STORAGE_KEY = 'urologyStudyProgress_v1';
+    function loadSavedProgress() {
+      try { const saved=JSON.parse(localStorage.getItem(STORAGE_KEY)||'{}'); if(saved.leitnerBoxes) appState.leitnerBoxes={...appState.leitnerBoxes,...saved.leitnerBoxes}; appState.oralHistory=Array.isArray(saved.oralHistory)?saved.oralHistory:[]; }
+      catch(e) { appState.oralHistory=[]; }
+    }
+    function saveProgress() { try { localStorage.setItem(STORAGE_KEY, JSON.stringify({leitnerBoxes:appState.leitnerBoxes, oralHistory:appState.oralHistory||[]})); } catch(e) {} }
+    loadSavedProgress();
+
+    // Tüm soruları varsayılan olarak Kutu 1'e (Tekrar edilecek) ata
+    UROLOGY_DATA.forEach(item => {
+      appState.leitnerBoxes[item.id] = 1;
+    });
+
+    /* ==========================================================================
+       SEKME YÖNETİMİ
+       ========================================================================== */
+    function switchTab(tabId) {
+      appState.currentTab = tabId;
+
+      // Sekme içeriklerini gizle/göster
+      document.querySelectorAll('.tab-content').forEach(el => {
+        el.classList.add('hidden');
+        el.classList.remove('block');
+      });
+      const activeContent = document.getElementById(`tab-${tabId}`);
+      if (activeContent) {
+        activeContent.classList.remove('hidden');
+        activeContent.classList.add('block');
+      }
+
+      // Masaüstü butonlarını güncelle
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('active-tab', 'bg-white', 'shadow-sm', 'text-sky-700', 'font-semibold');
+        btn.classList.add('text-slate-700');
+      });
+      const activeNav = document.getElementById(`nav-${tabId}`);
+      if (activeNav) {
+        activeNav.classList.add('active-tab', 'bg-white', 'shadow-sm', 'text-sky-700', 'font-semibold');
+        activeNav.classList.remove('text-slate-700');
+      }
+
+      // Mobil butonları güncelle
+      document.querySelectorAll('.tab-btn-mobile').forEach(btn => {
+        if (btn.dataset.target === tabId) {
+          btn.className = "tab-btn-mobile whitespace-nowrap px-3 py-1 rounded-md bg-white text-sky-700 font-bold border border-slate-200";
+        } else {
+          btn.className = "tab-btn-mobile whitespace-nowrap px-3 py-1 rounded-md text-slate-600";
+        }
+      });
+
+      // Özel başlatıcılar
+      if (tabId === 'flashcards') {
+        initFlashcardEngine();
+      } else if (tabId === 'quiz') {
+        startQuizSession();
+      }
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      lucide.createIcons();
+    }
+
+    /* ==========================================================================
+       MODÜL 1: KONU KÜTÜPHANESİ RENDER & FİLTRELEME
+       ========================================================================== */
+    function renderLibrary(items) {
+      const grid = document.getElementById('library-grid');
+      grid.innerHTML = '';
+
+      if (items.length === 0) {
+        grid.innerHTML = `
+          <div class="col-span-full py-12 text-center text-slate-400">
+            <i data-lucide="inbox" class="w-12 h-12 mx-auto mb-2 stroke-1"></i>
+            <p class="text-sm">Arama kriterlerine uygun soru bulunamadı.</p>
+          </div>
+        `;
+        lucide.createIcons();
+        return;
+      }
+
+      items.forEach(item => {
+        const box = appState.leitnerBoxes[item.id] || 1;
+        let badgeColor = "bg-rose-50 text-rose-700 border-rose-200";
+        let badgeLabel = "Kutu 1: Tekrar";
+        if (box === 2) {
+          badgeColor = "bg-amber-50 text-amber-700 border-amber-200";
+          badgeLabel = "Kutu 2: Zorlandı";
+        } else if (box === 3) {
+          badgeColor = "bg-emerald-50 text-emerald-700 border-emerald-200";
+          badgeLabel = "Kutu 3: Öğrenildi";
+        }
+
+        const isHidden = appState.allAnswersHidden;
+
+        const card = document.createElement('div');
+        card.className = "bg-white rounded-xl border border-slate-200 p-5 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-4";
+        card.innerHTML = `
+          <div class="space-y-2">
+            <div class="flex items-center justify-between text-xs gap-2">
+              <span class="font-bold text-sky-700 bg-sky-50 px-2.5 py-0.5 rounded-full border border-sky-100">${item.catName}</span>
+              <div class="flex items-center gap-1.5">
+                <span class="text-[11px] font-mono text-slate-400">#${item.id}</span>
+                <span class="px-2 py-0.5 rounded text-[11px] font-semibold border ${badgeColor}">${badgeLabel}</span>
+              </div>
+            </div>
+            <h3 class="font-bold text-slate-900 text-sm sm:text-base leading-snug">
+              ${item.q}
+            </h3>
+          </div>
+
+          <!-- Cevap Alanı (Active Recall Gizleme Özellikli) -->
+          <div class="pt-2 border-t border-slate-100">
+            <div id="ans-box-${item.id}" class="${isHidden ? 'hidden' : 'block'} text-xs sm:text-sm text-slate-700 leading-relaxed font-sans whitespace-pre-line bg-slate-50 p-3.5 rounded-lg border border-slate-200/80">
+              ${item.a}
+            </div>
+            <button onclick="toggleSingleAnswer(${item.id})" id="btn-single-${item.id}" class="mt-2 text-xs font-semibold text-sky-600 hover:text-sky-800 flex items-center gap-1">
+              <i data-lucide="${isHidden ? 'eye' : 'eye-off'}" class="w-3.5 h-3.5"></i>
+              <span>${isHidden ? 'Cevabı Göster' : 'Cevabı Gizle'}</span>
+            </button>
+          </div>
+
+          <!-- Leitner Kutu Değiştirici -->
+          <div class="flex items-center justify-between pt-2 border-t border-slate-100 text-xs">
+            <span class="text-slate-400 text-[11px]">Durumu Güncelle:</span>
+            <div class="flex items-center gap-1">
+              <button onclick="changeCardBox(${item.id}, 1)" title="Tekrar Edilecek" class="w-6 h-6 rounded flex items-center justify-center font-bold text-[11px] ${box === 1 ? 'bg-rose-500 text-white' : 'bg-slate-100 text-slate-600 hover:bg-rose-100'}">1</button>
+              <button onclick="changeCardBox(${item.id}, 2)" title="Zorlandım" class="w-6 h-6 rounded flex items-center justify-center font-bold text-[11px] ${box === 2 ? 'bg-amber-500 text-white' : 'bg-slate-100 text-slate-600 hover:bg-amber-100'}">2</button>
+              <button onclick="changeCardBox(${item.id}, 3)" title="Öğrenildi" class="w-6 h-6 rounded flex items-center justify-center font-bold text-[11px] ${box === 3 ? 'bg-emerald-500 text-white' : 'bg-slate-100 text-slate-600 hover:bg-emerald-100'}">3</button>
+            </div>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+
+      updateLearnedCounter();
+      lucide.createIcons();
+    }
+
+    function toggleSingleAnswer(id) {
+      const box = document.getElementById(`ans-box-${id}`);
+      const btn = document.getElementById(`btn-single-${id}`);
+      if (box.classList.contains('hidden')) {
+        box.classList.remove('hidden');
+        btn.innerHTML = `<i data-lucide="eye-off" class="w-3.5 h-3.5"></i> <span>Cevabı Gizle</span>`;
+      } else {
+        box.classList.add('hidden');
+        btn.innerHTML = `<i data-lucide="eye" class="w-3.5 h-3.5"></i> <span>Cevabı Göster</span>`;
+      }
+      lucide.createIcons();
+    }
+
+    function toggleAllAnswers() {
+      appState.allAnswersHidden = !appState.allAnswersHidden;
+      saveProgress();
+      const btn = document.getElementById('btn-toggle-all');
+      btn.innerHTML = appState.allAnswersHidden 
+        ? `<i data-lucide="eye" class="w-3.5 h-3.5"></i> Tüm Cevapları Aç`
+        : `<i data-lucide="eye-off" class="w-3.5 h-3.5"></i> Tüm Cevapları Gizle`;
+      filterLibrary();
+    }
+
+    function filterLibrary() {
+      const query = document.getElementById('library-search').value.toLowerCase().trim();
+      const cat = document.getElementById('library-cat-filter').value;
+      const status = document.getElementById('library-status-filter').value;
+
+      const filtered = UROLOGY_DATA.filter(item => {
+        // Arama sorgusu
+        const matchQuery = !query || 
+          item.q.toLowerCase().includes(query) || 
+          item.a.toLowerCase().includes(query);
+
+        // Kategori filtresi
+        const matchCat = (cat === 'ALL') || (item.cat === cat);
+
+        // Durum filtresi
+        const box = appState.leitnerBoxes[item.id] || 1;
+        let matchStatus = true;
+        if (status === 'box1') matchStatus = (box === 1);
+        if (status === 'box2') matchStatus = (box === 2);
+        if (status === 'box3') matchStatus = (box === 3);
+
+        return matchQuery && matchCat && matchStatus;
+      });
+
+      renderLibrary(filtered);
+    }
+
+    function changeCardBox(id, newBox) {
+      appState.leitnerBoxes[id] = newBox;
+      updateLearnedCounter();
+      filterLibrary();
+      showToast(`Soru #${id} -> Kutu ${newBox}'e taşındı.`);
+    }
+
+    function updateLearnedCounter() {
+      let box3Count = 0;
+      let box2Count = 0;
+      let box1Count = 0;
+      Object.values(appState.leitnerBoxes).forEach(box => {
+        if (box === 3) box3Count++;
+        else if (box === 2) box2Count++;
+        else box1Count++;
+      });
+      document.getElementById('learned-stat-badge').innerText = `${box3Count} / 96`;
+      
+      const elB1 = document.getElementById('fc-box1-count');
+      const elB2 = document.getElementById('fc-box2-count');
+      const elB3 = document.getElementById('fc-box3-count');
+      if (elB1) elB1.innerText = box1Count;
+      if (elB2) elB2.innerText = box2Count;
+      if (elB3) elB3.innerText = box3Count;
+    }
+
+    /* ==========================================================================
+       MODÜL 2: FLASHCARD & LEITNER MOTORU (SPACED REPETITION)
+       ========================================================================== */
+    function initFlashcardEngine() {
+      applyFlashcardFilter();
+      updateLearnedCounter();
+      renderFlashcard();
+    }
+
+    function setFlashcardBoxFilter(boxType) {
+      appState.flashcardBoxFilter = boxType;
+      
+      // Buton stillerini güncelle
+      ['1', '2', '3', 'ALL'].forEach(b => {
+        const btn = document.getElementById(b === 'ALL' ? 'fc-all-btn' : `fc-box${b}-btn`);
+        if (btn) {
+          if (appState.flashcardBoxFilter === (b === 'ALL' ? 'ALL' : parseInt(b))) {
+            btn.classList.add('ring-2', 'ring-offset-1', 'ring-slate-900');
+          } else {
+            btn.classList.remove('ring-2', 'ring-offset-1', 'ring-slate-900');
+          }
+        }
+      });
+
+      applyFlashcardFilter();
+      appState.flashcardIndex = 0;
+      renderFlashcard();
+    }
+
+    function applyFlashcardFilter() {
+      if (appState.flashcardBoxFilter === 'ALL') {
+        appState.filteredFlashcards = [...UROLOGY_DATA];
+      } else {
+        const targetBox = parseInt(appState.flashcardBoxFilter);
+        appState.filteredFlashcards = UROLOGY_DATA.filter(item => {
+          return (appState.leitnerBoxes[item.id] || 1) === targetBox;
+        });
+      }
+    }
+
+    function renderFlashcard() {
+      const inner = document.getElementById('flashcard-inner');
+      inner.classList.remove('rotate-y-180');
+
+      if (appState.filteredFlashcards.length === 0) {
+        document.getElementById('fc-question-text').innerText = "Bu kutuda şu anda soru bulunmuyor!";
+        document.getElementById('fc-answer-text').innerText = "Diğer kutuları seçebilir veya tüm soruları inceleyebilirsiniz.";
+        document.getElementById('fc-category-badge').innerText = "Boş";
+        document.getElementById('fc-index-badge').innerText = "0 / 0";
+        return;
+      }
+
+      if (appState.flashcardIndex >= appState.filteredFlashcards.length) {
+        appState.flashcardIndex = 0;
+      }
+
+      const item = appState.filteredFlashcards[appState.flashcardIndex];
+      document.getElementById('fc-question-text').innerText = item.q;
+      document.getElementById('fc-answer-text').innerText = item.a;
+      document.getElementById('fc-category-badge').innerText = item.catName;
+      document.getElementById('fc-index-badge').innerText = `${appState.flashcardIndex + 1} / ${appState.filteredFlashcards.length}`;
+      lucide.createIcons();
+    }
+
+    function flipFlashcard() {
+      const inner = document.getElementById('flashcard-inner');
+      inner.classList.toggle('rotate-y-180');
+    }
+
+    function nextFlashcard() {
+      if (appState.filteredFlashcards.length === 0) return;
+      appState.flashcardIndex = (appState.flashcardIndex + 1) % appState.filteredFlashcards.length;
+      renderFlashcard();
+    }
+
+    function prevFlashcard() {
+      if (appState.filteredFlashcards.length === 0) return;
+      appState.flashcardIndex = (appState.flashcardIndex - 1 + appState.filteredFlashcards.length) % appState.filteredFlashcards.length;
+      renderFlashcard();
+    }
+
+    function rateFlashcard(boxNumber) {
+      if (appState.filteredFlashcards.length === 0) return;
+      const currentItem = appState.filteredFlashcards[appState.flashcardIndex];
+      appState.leitnerBoxes[currentItem.id] = boxNumber;
+      saveProgress();
+
+      const labels = { 1: "Kutu 1'e (Tekrar)", 2: "Kutu 2'ye (Zor)", 3: "Kutu 3'e (Öğrenildi)" };
+      showToast(`Soru #${currentItem.id} ${labels[boxNumber]} kaydedildi.`);
+
+      updateLearnedCounter();
+
+      // Eğer aktif bir kutu filtresi varsa listeyi tazele
+      if (appState.flashcardBoxFilter !== 'ALL') {
+        applyFlashcardFilter();
+      } else {
+        appState.flashcardIndex = (appState.flashcardIndex + 1) % (appState.filteredFlashcards.length || 1);
+      }
+      renderFlashcard();
+    }
+
+    /* ==========================================================================
+       MODÜL 3: ÇAPRAZ TEST / INTERLEAVING QUIZ MOTORU
+       ========================================================================== */
+    // Gerçek notlardaki bilgilerden titizlikle kurgulanmış çoktan seçmeli test havuzu
+    const QUIZ_BANK = [
+      {
+        q: "Böbrek taşlarında boyutu 2 cm (20 mm) üzerinde olan ve alt polde yer almayan taşlar için birinci seçenek cerrahi tedavi hangisidir?",
+        cat: "Taş Hastalıkları",
+        opts: ["ESWL (Şok dalga litotripsi)", "PNL (Perkütan nefrolitotomi)", "Medikal ekspulsif tedavi", "Basit nefrektomi"],
+        correct: 1,
+        exp: "Ders notlarına göre: Böbrek taşlarında 2 cm (20 mm) üzeri taşlarda birinci seçenek PNL'dir."
+      },
+      {
+        q: "İskemik priapizmde süresi 72 saati aşmış bir hastada doğrudan yapılması gereken nihai tedavi nedir?",
+        cat: "Ürolojik Aciller",
+        opts: ["Yalnızca fenilefrin irrigasyonu", "Bilateral T-Şant", "Doğrudan penil protez takılması", "Androjen ablasyonu"],
+        correct: 2,
+        exp: "Ders notu priapizm tedavi şeması: >72 saatte doğrudan penil protez endikasyonu vardır."
+      },
+      {
+        q: "Bosniak böbrek kisti sınıflamasına göre malignite riski %95-100 olan ve cerrahi rezeksiyon gerektiren kategori hangisidir?",
+        cat: "Böbrek Kistleri",
+        opts: ["Kategori 2", "Kategori 2f", "Kategori 3", "Kategori 4"],
+        correct: 3,
+        exp: "Kategori 4 kistler kontrast tutan yumuşak doku komponentleri içerir ve malignite riski %95 - %100'dür."
+      },
+      {
+        q: "LHRH agonistleri (Goserelin vb.) prostat kanserinde uygulandığında ilk 7 gün LH ve testosteronu neden artırır (Flare etkisi)?",
+        cat: "Prostat Kanseri",
+        opts: ["Tümörün kemoterapötik direnç kazanması", "Hipofiz GnRH reseptörlerinin başlangıçtaki aşırı uyarımı", "Leydig hücrelerinin parçalanması", "Böbrek yetmezliği gelişmesi"],
+        correct: 1,
+        exp: "Notlara göre: Moleküller hipofiz reseptörlerine bağlandığında ilk 7 gün reseptörleri aşırı uyarır; 7 gün sonrasında ise down-regülasyon başlar ve testosteron baskılanır."
+      },
+      {
+        q: "Testis tümör belirteçlerinden Alfa-fetoprotein (AFP) hangi testis tümöründe ASLA yükselmez?",
+        cat: "Testis Tümörleri",
+        opts: ["Yolk sac tümörü", "Saf klasik seminom", "Embriyonel karsinom", "Teratom"],
+        correct: 1,
+        exp: "Ders notuna göre: AFP saf klasik seminomda yükselmez; yolk sac ve embriyonel karsinomda yükselir."
+      },
+      {
+        q: "Stres tip üriner inkontinans tedavisinde medikal olarak kullanımı onaylanmış TEK ilaç hangisidir?",
+        cat: "Üriner İnkontinans",
+        opts: ["Duloksetin", "Mirabegron", "Oksibutinin", "Tolterodin"],
+        correct: 0,
+        exp: "Not: 'Duloksetin (Stres Ü.İ. onaylanmış tek ilaç)' şeklinde açıkça belirtilmiştir."
+      },
+      {
+        q: "Mesane kanserinde rezeksiyon (TUR-M) sonrası hangi hasta grubuna 4-6 hafta sonra re-TUR (sekonder TUR-M) yapılması zorunludur?",
+        cat: "Mesane Kanseri",
+        opts: ["Yalnızca düşük dereceli Ta tümörlere", "Örnekte kas dokusu olmayan ve tüm T1 / yüksek dereceli tümörlere", "Sadece kemoterapi almış hastalara", "Mesane taşı eşlik edenlere"],
+        correct: 1,
+        exp: "Notlara göre: İlk rezeksiyonu komplet olmayan, örnekte kas dokusu olmayan, tüm T1 ve tüm yüksek dereceli tümörlerde sekonder TUR-M yapılmalıdır."
+      },
+      {
+        q: "Akut skrotum tablosunda testis torsiyonunu akut epididimitten ayıran temel klinik fizik muayene ve doppler bulgusu nedir?",
+        cat: "Ürolojik Aciller",
+        opts: ["Torsiyonda kremaster refleksi artar", "Torsiyonda testiste kan akımı kaybolur/azalır, Prehn negatiftir", "Epididimitte kan akımı tamamen sıfırdır", "Torsiyonda idrar kültürü daima pozitiftir"],
+        correct: 1,
+        exp: "Torsiyonda doppler USG'de kan akımı yoktur/azalmıştır, kremaster refleksi kaybolur ve testis kaldırıldığında ağrı geçmez (Prehn -)."
+      },
+      {
+        q: "Dünya Sağlık Örgütü (WHO) normal spermiogram kriterlerine göre normal sperm konsantrasyonu en az ne kadar olmalıdır?",
+        cat: "Androloji & İnfertilite",
+        opts: ["5 milyon / mL", "15 milyon / mL", "50 milyon / mL", "100 milyon / mL"],
+        correct: 1,
+        exp: "Ders notu spermiogram değerleri: Sperm sayısı &ge; 15 Milyon / mL, total sperm &ge; 39 milyon, hacim &ge; 1.5 mL."
+      },
+      {
+        q: "Renal kolik ağrısı ile acile başvuran ve medikal tedaviye yanıt vermeyen taş hastasında İLK girişimsel yöntem nedir?",
+        cat: "Aciller & Taş",
+        opts: ["Açık nefrektomi", "Double-J (JJ) Stent takılması", "Doğrudan ESWL uygulanması", "Radikal sistektomi"],
+        correct: 1,
+        exp: "Not: 'İlk girişimsel yöntem Double-J stent, ikinci yöntem ise Perkütan Nefrostomi tüpüdür'."
+      }
+    ];
+
+    function startQuizSession() {
+      appState.quizIndex = 0;
+      appState.quizScore = 0;
+      // Soruları karıştır (Interleaving)
+      appState.quizQuestions = [...QUIZ_BANK].sort(() => Math.random() - 0.5);
+      renderQuizQuestion();
+    }
+
+    function renderQuizQuestion() {
+      const qObj = appState.quizQuestions[appState.quizIndex];
+      document.getElementById('quiz-progress-text').innerText = `Soru ${appState.quizIndex + 1} / ${appState.quizQuestions.length}`;
+      document.getElementById('quiz-score-text').innerText = `Doğru: ${appState.quizScore}`;
+      document.getElementById('quiz-cat-tag').innerText = qObj.cat;
+      document.getElementById('quiz-question').innerText = qObj.q;
+
+      const optsContainer = document.getElementById('quiz-options');
+      optsContainer.innerHTML = '';
+
+      const feedback = document.getElementById('quiz-feedback');
+      feedback.className = "hidden p-4 rounded-xl text-sm leading-relaxed border";
+      feedback.innerHTML = '';
+
+      const nextBtn = document.getElementById('quiz-next-btn');
+      nextBtn.classList.add('hidden');
+
+      qObj.opts.forEach((optText, idx) => {
+        const btn = document.createElement('button');
+        btn.className = "w-full text-left p-3.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 transition font-medium text-sm text-slate-800 flex items-center gap-3";
+        btn.innerHTML = `
+          <span class="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-xs font-bold text-slate-600">${String.fromCharCode(65 + idx)}</span>
+          <span class="flex-1">${optText}</span>
+        `;
+        btn.onclick = () => selectQuizOption(idx);
+        optsContainer.appendChild(btn);
+      });
+      lucide.createIcons();
+    }
+
+    function selectQuizOption(selectedIdx) {
+      const qObj = appState.quizQuestions[appState.quizIndex];
+      const optButtons = document.querySelectorAll('#quiz-options button');
+      
+      // Tüm butonları devre dışı bırak
+      optButtons.forEach(b => b.disabled = true);
+
+      const isCorrect = (selectedIdx === qObj.correct);
+      if (isCorrect) {
+        appState.quizScore++;
+        document.getElementById('quiz-score-text').innerText = `Doğru: ${appState.quizScore}`;
+      }
+
+      optButtons.forEach((btn, idx) => {
+        if (idx === qObj.correct) {
+          btn.className = "w-full text-left p-3.5 rounded-xl border border-emerald-300 bg-emerald-50 text-emerald-900 font-semibold flex items-center gap-3";
+          btn.querySelector('span').className = "w-6 h-6 rounded-full bg-emerald-500 text-white flex items-center justify-center text-xs font-bold";
+        } else if (idx === selectedIdx && !isCorrect) {
+          btn.className = "w-full text-left p-3.5 rounded-xl border border-rose-300 bg-rose-50 text-rose-900 font-semibold flex items-center gap-3";
+          btn.querySelector('span').className = "w-6 h-6 rounded-full bg-rose-500 text-white flex items-center justify-center text-xs font-bold";
+        } else {
+          btn.className = "w-full text-left p-3.5 rounded-xl border border-slate-100 bg-slate-50 text-slate-400 opacity-60 flex items-center gap-3";
+        }
+      });
+
+      // Geri Bildirim Açıklaması
+      const feedback = document.getElementById('quiz-feedback');
+      feedback.classList.remove('hidden');
+      if (isCorrect) {
+        feedback.classList.add('bg-emerald-50', 'border-emerald-200', 'text-emerald-900');
+        feedback.innerHTML = `<strong>Tebrikler, Doğru!</strong><p class="mt-1">${qObj.exp}</p>`;
+      } else {
+        feedback.classList.add('bg-rose-50', 'border-rose-200', 'text-rose-900');
+        feedback.innerHTML = `<strong>Yanlış Seçenek!</strong><p class="mt-1">${qObj.exp}</p>`;
+      }
+
+      // Sonraki Soru Butonu
+      const nextBtn = document.getElementById('quiz-next-btn');
+      nextBtn.classList.remove('hidden');
+    }
+
+    function nextQuizQuestion() {
+      appState.quizIndex++;
+      if (appState.quizIndex < appState.quizQuestions.length) {
+        renderQuizQuestion();
+      } else {
+        // Quiz bitti
+        const container = document.getElementById('quiz-container');
+        container.innerHTML = `
+          <div class="text-center py-8 space-y-4">
+            <div class="w-16 h-16 rounded-full bg-sky-100 text-sky-600 flex items-center justify-center mx-auto">
+              <i data-lucide="award" class="w-8 h-8"></i>
+            </div>
+            <h3 class="text-2xl font-extrabold text-slate-900">Çapraz Alıştırma Tamamlandı!</h3>
+            <p class="text-slate-600 text-sm">
+              Toplam <strong>${appState.quizQuestions.length}</strong> sorudan <strong>${appState.quizScore}</strong> tanesini doğru yanıtladınız.
+            </p>
+            <div class="pt-4">
+              <button onclick="startQuizSession()" class="px-5 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-700 text-white font-semibold text-sm transition">
+                Testi Yeniden Başlat (Farklı Sırayla)
+              </button>
+            </div>
+          </div>
+        `;
+        lucide.createIcons();
+      }
+    }
+
+    /* ==========================================================================
+       MODÜL 4: FEYNMAN & DERİNLEŞTİRİCİ SORGULAMA LABI
+       ========================================================================== */
+    const FEYNMAN_SELECT_IDS = [88, 37, 7, 46, 57, 81, 74, 94];
+
+    function initFeynmanLab() {
+      const list = document.getElementById('feynman-topics-list');
+      list.innerHTML = '';
+
+      FEYNMAN_SELECT_IDS.forEach(id => {
+        const item = UROLOGY_DATA.find(x => x.id === id);
+        if (!item) return;
+
+        const isSelected = (item.id === appState.feynmanActiveId);
+        const div = document.createElement('div');
+        div.className = `p-2.5 rounded-xl border text-xs cursor-pointer transition ${
+          isSelected 
+            ? 'bg-indigo-50 border-indigo-300 text-indigo-900 font-bold' 
+            : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
+        }`;
+        div.innerHTML = `
+          <div class="flex items-center justify-between text-[11px] text-slate-400 mb-0.5">
+            <span>Soru #${item.id}</span>
+            <span class="text-indigo-600">${item.catName}</span>
+          </div>
+          <div>${item.q}</div>
+        `;
+        div.onclick = () => selectFeynmanTopic(item.id);
+        list.appendChild(div);
+      });
+
+      loadFeynmanTopic(appState.feynmanActiveId);
+    }
+
+    function selectFeynmanTopic(id) {
+      appState.feynmanActiveId = id;
+      initFeynmanLab();
+    }
+
+    function loadFeynmanTopic(id) {
+      const item = UROLOGY_DATA.find(x => x.id === id);
+      if (!item) return;
+
+      document.getElementById('feynman-active-question').innerText = item.q;
+      document.getElementById('feynman-user-input').value = "";
+      document.getElementById('feynman-comparison-box').classList.add('hidden');
+      document.getElementById('feynman-original-answer').innerText = item.a;
+    }
+
+    function compareFeynman() {
+      const input = document.getElementById('feynman-user-input').value.trim();
+      const compBox = document.getElementById('feynman-comparison-box');
+      compBox.classList.remove('hidden');
+
+      if (!input) {
+        showToast("Önce kendi kelimelerinle bir açıklama yazmayı dene!");
+      } else {
+        showToast("Harika! Şimdi yazdığın açıklamayı orijinal ders notuyla kıyasla.");
+      }
+      lucide.createIcons();
+    }
+
+    /* ==========================================================================
+       YARDIMCI FONKSİYONLAR & MODAL
+       ========================================================================== */
+    function openTechniquesModal() {
+      document.getElementById('techniques-modal').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    function closeTechniquesModal() {
+      document.getElementById('techniques-modal').classList.add('hidden');
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById('toast-box');
+      document.getElementById('toast-text').innerText = message;
+      toast.classList.remove('translate-y-20', 'opacity-0');
+      toast.classList.add('translate-y-0', 'opacity-100');
+      setTimeout(() => {
+        toast.classList.remove('translate-y-0', 'opacity-100');
+        toast.classList.add('translate-y-20', 'opacity-0');
+      }, 2400);
+    }
+
+    let oralSession = null;
+    function startOral() { const pool=[...UROLOGY_DATA].sort(()=>Math.random()-0.5).slice(0,5); oralSession={questions:pool,index:0,points:[],total:0,revealed:false}; document.getElementById('oral-overlay').classList.remove('hidden'); document.body.style.overflow='hidden'; renderOralQuestion(); }
+    function renderOralQuestion() { if(!oralSession)return; const item=oralSession.questions[oralSession.index]; document.getElementById('oral-progress').textContent=`Soru ${oralSession.index+1} / 5`; document.getElementById('oral-category').textContent=item.catName||'Üroloji'; document.getElementById('oral-question').textContent=item.q; const ans=document.getElementById('oral-answer'); ans.textContent=item.a; ans.classList.add('hidden'); document.getElementById('oral-reveal-btn').classList.remove('hidden'); document.getElementById('oral-score-controls').classList.add('hidden'); document.getElementById('oral-total').textContent=`Toplam: ${oralSession.total} / 100`; oralSession.revealed=false; }
+    function revealOralAnswer() { if(!oralSession||oralSession.revealed)return; oralSession.revealed=true; document.getElementById('oral-answer').classList.remove('hidden'); document.getElementById('oral-reveal-btn').classList.add('hidden'); document.getElementById('oral-score-controls').classList.remove('hidden'); }
+    function scoreOralQuestion(points) { if(!oralSession||!oralSession.revealed)return; oralSession.points.push(points); oralSession.total+=points; if(oralSession.index<4){oralSession.index++;renderOralQuestion();}else finishOral(); }
+    function finishOral() { if(!oralSession)return; const answered=oralSession.points.length; const record={date:new Date().toLocaleString('tr-TR'),score:oralSession.total,outOf:answered*20,answered,points:[...oralSession.points]}; appState.oralHistory=appState.oralHistory||[]; appState.oralHistory.unshift(record); saveProgress(); renderOralHistory(); oralSession=null; document.getElementById('oral-overlay').classList.add('hidden'); document.body.style.overflow=''; if(appState.currentTab==='oral')switchTab('oral'); showToast('Sözlü tamamlandı ve puan kaydedildi.'); }
+    function renderOralHistory() { const list=document.getElementById('oral-history-list'); if(!list)return; const history=appState.oralHistory||[]; if(!history.length){list.innerHTML='<p class="text-slate-400">Henüz tamamlanmış sözlü yok.</p>';return;} list.innerHTML=history.map((r,i)=>`<div class="flex flex-wrap items-center justify-between gap-2 p-3 rounded-xl border border-slate-200 bg-slate-50"><div><div class="font-semibold text-slate-800">Sözlü #${history.length-i}</div><div class="text-xs text-slate-500">${r.date} · ${r.answered}/5 soru değerlendirildi</div></div><div class="font-extrabold text-sky-700">${r.score} / ${r.outOf} puan</div></div>`).join(''); }
+
+    // Uygulama Başlangıç Yüklemesi
+    window.onload = function() {
+      renderLibrary(UROLOGY_DATA);
+      updateLearnedCounter();
+      renderOralHistory();
+      lucide.createIcons();
+    };
+  </script>
+</body>
+</html>
